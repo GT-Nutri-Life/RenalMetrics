@@ -1,0 +1,2161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RenalDiabetic NG Feed Planner</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* Facebook Blue Palette */
+    --fb-blue:       #1877F2;
+    --fb-blue-dark:  #0b5ed7;
+    --fb-blue-light: #E7F3FF;
+    --fb-green:      #42B72A;
+    --fb-green-dark: #36a420;
+
+    /* Surface */
+    --bg:     #F0F2F5;
+    --card:   #FFFFFF;
+    --border: #CED0D4;
+    --input:  #F0F2F5;
+
+    /* Text */
+    --text:       #1C1E21;
+    --text-sec:   #65676B;
+    --text-muted: #8A8D91;
+
+    /* Status Colors */
+    --amber:  #F5A623;
+    --rose:   #E41749;
+    --green:  #42B72A;
+    --indigo: #5856D6;
+
+    /* Shadows */
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.1);
+    --shadow-md: 0 2px 8px rgba(0,0,0,0.12);
+    --shadow-lg: 0 4px 20px rgba(0,0,0,0.15);
+  }
+
+  [data-dark] {
+    --bg:         #18191A;
+    --card:       #242526;
+    --border:     #3E4042;
+    --input:      #3A3B3C;
+    --text:       #E4E6EA;
+    --text-sec:   #B0B3B8;
+    --text-muted: #8A8D91;
+    --fb-blue-light: #263951;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
+    --shadow-md: 0 2px 8px rgba(0,0,0,0.4);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 15px;
+    line-height: 1.5;
+    transition: background 0.25s, color 0.25s;
+  }
+
+  /* ============ NAVBAR ============ */
+  .navbar {
+    background: var(--fb-blue);
+    position: sticky;
+    top: 0;
+    z-index: 200;
+    box-shadow: var(--shadow-md);
+  }
+  .navbar-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+    gap: 12px;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .brand-icon {
+    width: 36px;
+    height: 36px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    backdrop-filter: blur(4px);
+  }
+  .brand-text { line-height: 1.1; }
+  .brand-title { font-weight: 700; font-size: 0.95rem; color: #fff; letter-spacing: -0.01em; }
+  .brand-sub { font-size: 0.62rem; color: rgba(255,255,255,0.75); text-transform: uppercase; letter-spacing: 0.08em; }
+
+  .nav-tabs {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .nav-tabs::-webkit-scrollbar { display: none; }
+
+  .nav-tab {
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: rgba(255,255,255,0.8);
+    border: none;
+    background: transparent;
+    white-space: nowrap;
+    transition: all 0.15s;
+    font-family: 'IBM Plex Sans', sans-serif;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .nav-tab:hover { background: rgba(255,255,255,0.15); color: #fff; }
+  .nav-tab.active { background: rgba(255,255,255,0.22); color: #fff; font-weight: 600; }
+
+  .nav-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+  .dark-toggle {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.15);
+    border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem; color: white; transition: background 0.15s;
+  }
+  .dark-toggle:hover { background: rgba(255,255,255,0.25); }
+
+  /* ============ DISCLAIMER ============ */
+  .disclaimer-bar {
+    background: #FFF3CD;
+    border-bottom: 1px solid #FDEEBA;
+    color: #856404;
+    font-size: 0.78rem;
+    padding: 9px 20px;
+    text-align: center;
+    font-weight: 500;
+  }
+  [data-dark] .disclaimer-bar {
+    background: #3D3000;
+    border-bottom-color: #5A4800;
+    color: #FFC107;
+  }
+
+  /* ============ SECTIONS ============ */
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* ============ CARD ============ */
+  .card {
+    background: var(--card);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
+    transition: background 0.25s, border 0.25s;
+  }
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .card-icon {
+    width: 34px; height: 34px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+  .card-icon.blue { background: var(--fb-blue-light); }
+  .card-icon.green { background: rgba(66,183,42,0.1); }
+  .card-icon.amber { background: rgba(245,166,35,0.1); }
+  .card-icon.rose { background: rgba(228,23,73,0.1); }
+  .card-icon.indigo { background: rgba(88,86,214,0.1); }
+
+  .card-title { font-size: 0.92rem; font-weight: 600; color: var(--text); }
+  .card-sub { font-size: 0.73rem; color: var(--text-muted); margin-top: 1px; }
+  .card-body { padding: 18px 20px; }
+
+  /* ============ FORM ELEMENTS ============ */
+  .input-label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-sec);
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .input-field {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    background: var(--input);
+    color: var(--text);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 0.875rem;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s, background 0.25s;
+  }
+  .input-field:focus {
+    border-color: var(--fb-blue);
+    box-shadow: 0 0 0 3px rgba(24,119,242,0.15);
+    background: var(--card);
+  }
+  .input-field::placeholder { color: var(--text-muted); }
+
+  select.input-field {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='7' viewBox='0 0 12 7'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%231877F2' stroke-width='1.8' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 11px center;
+    padding-right: 32px;
+    cursor: pointer;
+  }
+
+  /* ============ BUTTONS ============ */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    padding: 9px 18px;
+    border-radius: 8px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.15s;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .btn-primary {
+    background: var(--fb-blue);
+    color: white;
+    box-shadow: 0 2px 6px rgba(24,119,242,0.35);
+  }
+  .btn-primary:hover { background: var(--fb-blue-dark); box-shadow: 0 4px 12px rgba(24,119,242,0.45); transform: translateY(-1px); }
+  .btn-primary:active { transform: translateY(0); }
+
+  .btn-success {
+    background: var(--fb-green);
+    color: white;
+    box-shadow: 0 2px 6px rgba(66,183,42,0.3);
+  }
+  .btn-success:hover { background: var(--fb-green-dark); }
+
+  .btn-ghost {
+    background: var(--fb-blue-light);
+    color: var(--fb-blue);
+    border: 1.5px solid transparent;
+  }
+  .btn-ghost:hover { border-color: var(--fb-blue); background: var(--fb-blue-light); }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--fb-blue);
+    border: 1.5px solid var(--fb-blue);
+  }
+  .btn-outline:hover { background: var(--fb-blue); color: white; }
+
+  .btn-danger {
+    background: transparent;
+    color: var(--rose);
+    border: 1.5px solid var(--rose);
+    font-size: 0.78rem;
+    padding: 5px 10px;
+  }
+  .btn-danger:hover { background: var(--rose); color: white; }
+
+  .btn-sm { padding: 6px 12px; font-size: 0.78rem; border-radius: 6px; }
+  .btn-lg { padding: 13px 28px; font-size: 1rem; }
+  .btn-full { width: 100%; }
+
+  /* ============ RESULT BOXES ============ */
+  .result-box {
+    background: var(--fb-blue);
+    color: white;
+    border-radius: 10px;
+    padding: 16px 12px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .result-box::before {
+    content: '';
+    position: absolute;
+    width: 60px; height: 60px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+    top: -20px; right: -15px;
+  }
+  .result-box .val {
+    font-size: 1.75rem;
+    font-weight: 700;
+    font-family: 'IBM Plex Mono', monospace;
+    line-height: 1;
+  }
+  .result-box .lbl {
+    font-size: 0.67rem;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    opacity: 0.8;
+    margin-top: 4px;
+  }
+
+  .result-highlight {
+    background: linear-gradient(135deg, var(--fb-blue), #0d5cbf);
+    color: white;
+    border-radius: 10px;
+    padding: 18px;
+    text-align: center;
+    box-shadow: 0 4px 16px rgba(24,119,242,0.3);
+  }
+  .result-highlight .val {
+    font-size: 2.2rem;
+    font-weight: 700;
+    font-family: 'IBM Plex Mono', monospace;
+    line-height: 1;
+  }
+  .result-highlight .lbl {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    opacity: 0.85;
+    margin-top: 5px;
+  }
+
+  .stat-mini {
+    background: var(--fb-blue-light);
+    border-radius: 8px;
+    padding: 13px;
+    text-align: center;
+  }
+  .stat-mini .val {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--fb-blue);
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .stat-mini .lbl {
+    font-size: 0.68rem;
+    color: var(--text-sec);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 3px;
+  }
+
+  /* ============ BADGES ============ */
+  .badge {
+    display: inline-block;
+    padding: 3px 9px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .badge-blue { background: var(--fb-blue-light); color: var(--fb-blue); }
+  .badge-green { background: rgba(66,183,42,0.12); color: #1f8a09; }
+  .badge-amber { background: rgba(245,166,35,0.12); color: #b45309; }
+  .badge-rose { background: rgba(228,23,73,0.1); color: #be123c; }
+  .badge-gray { background: rgba(100,100,100,0.1); color: var(--text-sec); }
+
+  [data-dark] .badge-green { color: #5acc42; }
+  [data-dark] .badge-amber { color: #f5c63c; }
+  [data-dark] .badge-rose { color: #f87192; }
+
+  /* ============ ALERTS ============ */
+  .alert {
+    border-radius: 8px;
+    padding: 11px 14px;
+    font-size: 0.82rem;
+    font-weight: 500;
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    line-height: 1.5;
+  }
+  .alert-warning { background: rgba(245,166,35,0.1); border-left: 3px solid var(--amber); color: #92400e; }
+  .alert-danger  { background: rgba(228,23,73,0.08); border-left: 3px solid var(--rose); color: #9f1239; }
+  .alert-info    { background: var(--fb-blue-light); border-left: 3px solid var(--fb-blue); color: #1e40af; }
+  .alert-success { background: rgba(66,183,42,0.1); border-left: 3px solid var(--fb-green); color: #166534; }
+  [data-dark] .alert-warning { color: #fcd34d; }
+  [data-dark] .alert-danger  { color: #fca5a5; }
+  [data-dark] .alert-info    { color: #93c5fd; }
+  [data-dark] .alert-success { color: #86efac; }
+
+  /* ============ PROGRESS BARS ============ */
+  .progress-wrap { background: var(--border); border-radius: 99px; height: 7px; overflow: hidden; }
+  .progress-bar  { height: 100%; border-radius: 99px; transition: width 0.5s ease; }
+
+  /* ============ NUTRIENT ROWS ============ */
+  .nutrient-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .nutrient-row:last-child { border-bottom: none; }
+
+  /* ============ FOOD TAGS ============ */
+  .food-tag {
+    display: inline-block;
+    padding: 4px 10px;
+    background: var(--fb-blue-light);
+    color: var(--fb-blue);
+    border-radius: 20px;
+    font-size: 0.73rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+    border: 1px solid rgba(24,119,242,0.2);
+  }
+  .food-tag:hover { background: var(--fb-blue); color: white; border-color: transparent; }
+
+  /* ============ TABS ============ */
+  .tab-btn {
+    padding: 7px 14px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    border: none;
+    background: transparent;
+    color: var(--text-sec);
+    font-family: 'IBM Plex Sans', sans-serif;
+  }
+  .tab-btn.active { background: var(--fb-blue); color: white; box-shadow: 0 2px 6px rgba(24,119,242,0.3); }
+  .tab-btn:hover:not(.active) { background: var(--fb-blue-light); color: var(--fb-blue); }
+
+  /* ============ PROFILE PILLS ============ */
+  .profile-pill {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    font-size: 0.82rem;
+    background: var(--card);
+    transition: all 0.15s;
+  }
+  .profile-pill:hover { border-color: var(--fb-blue); background: var(--fb-blue-light); }
+
+  /* ============ FOOD ROWS ============ */
+  .food-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr auto;
+    gap: 8px;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.8rem;
+  }
+  .food-row:last-child { border-bottom: none; }
+  .food-header {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+  }
+
+  /* ============ STEP DOTS ============ */
+  .step-dot {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .step-dot.active { background: var(--fb-blue); color: white; box-shadow: 0 2px 8px rgba(24,119,242,0.4); }
+  .step-dot.done   { background: var(--fb-green); color: white; }
+  .step-dot.pending { background: var(--border); color: var(--text-muted); }
+
+  /* ============ MODAL ============ */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 999;
+    display: flex; align-items: center; justify-content: center;
+    padding: 16px;
+    backdrop-filter: blur(2px);
+  }
+  .modal-box {
+    background: var(--card);
+    border-radius: 14px;
+    max-width: 540px;
+    width: 100%;
+    padding: 28px;
+    position: relative;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+    border: 1px solid var(--border);
+  }
+
+  /* ============ TOOLTIP ============ */
+  .tooltip-icon {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    background: var(--fb-blue);
+    color: white;
+    font-size: 0.62rem;
+    font-weight: 700;
+    cursor: pointer;
+    margin-left: 4px;
+    flex-shrink: 0;
+    transition: background 0.15s;
+  }
+  .tooltip-icon:hover { background: var(--fb-blue-dark); }
+
+  /* ============ NG FORMULA CARD ============ */
+  .ng-formula-card {
+    border: 2px solid var(--fb-blue);
+    border-radius: 10px;
+    padding: 15px;
+    background: var(--fb-blue-light);
+  }
+
+  /* ============ HERO SECTION ============ */
+  .hero-section {
+    background: linear-gradient(135deg, #0b5ed7 0%, var(--fb-blue) 40%, #1d8cf8 100%);
+    position: relative;
+    overflow: hidden;
+    padding: 60px 20px;
+  }
+  .hero-section::before {
+    content: '';
+    position: absolute;
+    width: 500px; height: 500px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.06);
+    top: -200px; right: -150px;
+  }
+  .hero-section::after {
+    content: '';
+    position: absolute;
+    width: 300px; height: 300px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+    bottom: -100px; left: 5%;
+  }
+  .hero-pill {
+    display: inline-block;
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 100px;
+    padding: 6px 18px;
+    font-size: 0.72rem;
+    color: rgba(255,255,255,0.9);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 20px;
+  }
+
+  /* ============ TOGGLE SWITCH ============ */
+  .toggle-switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+  .toggle-switch input { opacity: 0; width: 0; height: 0; }
+  .toggle-slider { position: absolute; inset: 0; background: var(--border); border-radius: 24px; cursor: pointer; transition: 0.25s; }
+  .toggle-slider:before { content: ''; position: absolute; width: 18px; height: 18px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: 0.25s; box-shadow: 0 1px 4px rgba(0,0,0,0.2); }
+  input:checked + .toggle-slider { background: var(--fb-blue); }
+  input:checked + .toggle-slider:before { transform: translateX(20px); }
+
+  /* ============ SECTION DIVIDER ============ */
+  .section-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.02em;
+  }
+  .section-sub {
+    font-size: 0.83rem;
+    color: var(--text-sec);
+    margin-top: 3px;
+  }
+
+  /* ============ PRINT ============ */
+  .print-only { display: none; }
+  @media print {
+    .no-print { display: none; }
+    .print-only { display: block; }
+    .navbar, .disclaimer-bar { display: none; }
+  }
+
+  /* ============ RESPONSIVE ============ */
+  @media (max-width: 768px) {
+    .result-box .val { font-size: 1.4rem; }
+    .hero-section { padding: 40px 16px; }
+    .brand-sub { display: none; }
+  }
+
+  /* ============ DIVIDER ============ */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 14px 0;
+  }
+
+  /* ============ FEATURE CARD ============ */
+  .feature-card {
+    padding: 22px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-radius: 12px;
+  }
+  .feature-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--fb-blue);
+  }
+  .feature-card:hover .feature-icon { background: var(--fb-blue); }
+  .feature-icon {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    background: var(--fb-blue-light);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem;
+    margin-bottom: 14px;
+    transition: background 0.2s;
+  }
+
+  /* ============ SCROLLBAR ============ */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar no-print">
+  <div class="navbar-inner">
+    <div class="brand">
+      <div class="brand-icon">🫘</div>
+      <div class="brand-text">
+        <div class="brand-title">RenalDiabetic</div>
+        <div class="brand-sub">NG Feed Planner · v2.0</div>
+      </div>
+    </div>
+
+    <div class="nav-tabs">
+      <button class="nav-tab active" onclick="showSection('home')">🏠 Home</button>
+      <button class="nav-tab" onclick="showSection('calculator')">🧮 Calculator</button>
+      <button class="nav-tab" onclick="showSection('planner')">🍽️ Meal Planner</button>
+      <button class="nav-tab" onclick="showSection('tracker')">📊 Tracker</button>
+      <button class="nav-tab" onclick="showSection('resources')">📚 Resources</button>
+    </div>
+
+    <div class="nav-actions">
+      <button class="dark-toggle" onclick="toggleDark()" title="Toggle Dark Mode">🌙</button>
+    </div>
+  </div>
+</nav>
+
+<!-- DISCLAIMER BAR -->
+<div class="disclaimer-bar no-print">
+  ⚠️ <strong>Educational Tool Only.</strong> All calculations are estimates. Consult a Registered Dietitian (RD) and physician before making any dietary or clinical decisions.
+</div>
+
+<!-- ===== HOME SECTION ===== -->
+<section id="sec-home" class="section active">
+  <div class="hero-section">
+    <div style="max-width:800px;margin:0 auto;text-align:center;position:relative;z-index:1;">
+      <div class="hero-pill">Evidence-Based Clinical Nutrition Tool</div>
+      <h1 style="font-size:clamp(1.8rem,5vw,2.8rem);font-weight:700;color:white;line-height:1.2;margin-bottom:16px;letter-spacing:-0.03em;">
+        RenalDiabetic NG Feed Planner
+      </h1>
+      <p style="color:rgba(255,255,255,0.85);font-size:1rem;max-width:580px;margin:0 auto 28px;line-height:1.7;">
+        A comprehensive nutrition calculator for estimating dietary and enteral (nasogastric/NG feed) needs in patients with Chronic Kidney Disease (CKD) and/or Diabetes/DKD.
+      </p>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+        <button class="btn btn-success btn-lg" onclick="showSection('calculator')">
+          🧮 Start Calculator
+        </button>
+        <button class="btn" onclick="showSection('resources')" style="background:rgba(255,255,255,0.15);color:white;border:1.5px solid rgba(255,255,255,0.3);padding:13px 24px;font-size:1rem;">
+          📚 View Guidelines
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div style="max-width:1100px;margin:0 auto;padding:36px 16px;">
+
+    <!-- FEATURE CARDS -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-bottom:36px;">
+      <div class="card feature-card" onclick="showSection('calculator')">
+        <div class="feature-icon">⚡</div>
+        <h3 style="font-size:0.95rem;font-weight:600;margin-bottom:6px;">Energy Calculations</h3>
+        <p style="font-size:0.8rem;color:var(--text-sec);line-height:1.6;">BMR (Mifflin-St Jeor & Harris-Benedict), TDEE, disease-adjusted energy with CKD/DKD/Dialysis logic.</p>
+      </div>
+      <div class="card feature-card" onclick="showSection('calculator')">
+        <div class="feature-icon">🧬</div>
+        <h3 style="font-size:0.95rem;font-weight:600;margin-bottom:6px;">Protein & Macros</h3>
+        <p style="font-size:0.8rem;color:var(--text-sec);line-height:1.6;">Stage-specific protein recs (KDOQI 2020): 0.55–1.2 g/kg. Carb, fat, Na, K⁺, PO₄ restrictions.</p>
+      </div>
+      <div class="card feature-card" onclick="showSection('planner')">
+        <div class="feature-icon">🍶</div>
+        <h3 style="font-size:0.95rem;font-weight:600;margin-bottom:6px;">NG Feed Formulas</h3>
+        <p style="font-size:0.8rem;color:var(--text-sec);line-height:1.6;">Calculate enteral feed volume, caloric density (1–2 kcal/mL), and distribution across feeding times.</p>
+      </div>
+      <div class="card feature-card" onclick="showSection('planner')">
+        <div class="feature-icon">🍚</div>
+        <h3 style="font-size:0.95rem;font-weight:600;margin-bottom:6px;">Sri Lankan Foods</h3>
+        <p style="font-size:0.8rem;color:var(--text-sec);line-height:1.6;">Nutrient database includes local foods: rice, dhal, jackfruit, gotukola, tempeh, and more.</p>
+      </div>
+    </div>
+
+    <!-- DISCLAIMER CARD -->
+    <div style="background:linear-gradient(135deg,#1877F2,#0b5ed7);border-radius:14px;padding:26px;color:white;margin-bottom:32px;">
+      <h2 style="color:white;font-size:1.1rem;font-weight:700;margin-bottom:10px;">⚠️ Important Medical Disclaimer</h2>
+      <p style="font-size:0.85rem;line-height:1.8;opacity:0.92;">
+        This application provides <strong>educational estimates only</strong>. It is NOT a substitute for professional medical nutrition therapy. Calculations use evidence-based formulas (Mifflin-St Jeor, KDOQI 2020, ADA guidelines) but may vary ±10–15% from indirect calorimetry. Always consult a <strong>Registered Dietitian (RD)</strong> and/or nephrologist/endocrinologist for individualized plans. Lab values (eGFR, serum K⁺, PO₄, HbA1c, albumin) must guide clinical decisions. <strong>Never use this tool for direct medical management without professional oversight.</strong>
+      </p>
+    </div>
+
+    <!-- HOW TO USE -->
+    <h2 style="font-size:1.1rem;font-weight:700;margin-bottom:14px;">How to Use This Tool</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;">
+      <div class="card" style="padding:18px;display:flex;gap:14px;align-items:flex-start;">
+        <div class="step-dot active">1</div>
+        <div><strong style="font-size:0.88rem;">Enter Patient Data</strong><p style="font-size:0.78rem;color:var(--text-sec);margin-top:4px;line-height:1.5;">Age, gender, weight, height, CKD stage, diabetes status, activity level.</p></div>
+      </div>
+      <div class="card" style="padding:18px;display:flex;gap:14px;align-items:flex-start;">
+        <div class="step-dot active">2</div>
+        <div><strong style="font-size:0.88rem;">Review Results</strong><p style="font-size:0.78rem;color:var(--text-sec);margin-top:4px;line-height:1.5;">BMR, TDEE, protein needs, macro splits, restriction limits displayed instantly.</p></div>
+      </div>
+      <div class="card" style="padding:18px;display:flex;gap:14px;align-items:flex-start;">
+        <div class="step-dot active">3</div>
+        <div><strong style="font-size:0.88rem;">Plan Meals or NG Feed</strong><p style="font-size:0.78rem;color:var(--text-sec);margin-top:4px;line-height:1.5;">Distribute targets across meals, add foods, or calculate NG feed volumes.</p></div>
+      </div>
+      <div class="card" style="padding:18px;display:flex;gap:14px;align-items:flex-start;">
+        <div class="step-dot active">4</div>
+        <div><strong style="font-size:0.88rem;">Track & Export</strong><p style="font-size:0.78rem;color:var(--text-sec);margin-top:4px;line-height:1.5;">Monitor nutrient targets, save profiles, and print/export your summary.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CALCULATOR SECTION ===== -->
+<section id="sec-calculator" class="section">
+  <div style="max-width:1200px;margin:0 auto;padding:24px 16px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:12px;">
+      <div>
+        <div class="section-title">Nutrition Calculator</div>
+        <div class="section-sub">Enter patient details for personalized estimates</div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn btn-ghost btn-sm" onclick="loadDemo()">📋 Load Demo</button>
+        <button class="btn btn-ghost btn-sm" onclick="saveProfile()">💾 Save Profile</button>
+        <button class="btn btn-ghost btn-sm" onclick="loadProfile()">📂 Load Profile</button>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;" id="calc-grid">
+      <!-- INPUT FORM -->
+      <div style="grid-column:1;">
+
+        <!-- DEMOGRAPHICS -->
+        <div class="card" style="margin-bottom:14px;">
+          <div class="card-header">
+            <div class="card-icon blue">👤</div>
+            <div><div class="card-title">Demographics</div><div class="card-sub">Basic patient information</div></div>
+          </div>
+          <div class="card-body">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+              <div>
+                <label class="input-label">Age (years)</label>
+                <input type="number" id="age" class="input-field" placeholder="e.g. 55" min="18" max="120" oninput="calculate()">
+              </div>
+              <div>
+                <label class="input-label">Gender</label>
+                <select id="gender" class="input-field" onchange="calculate()">
+                  <option value="">Select...</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                </select>
+              </div>
+              <div>
+                <label class="input-label">Weight</label>
+                <div style="display:flex;gap:6px;">
+                  <input type="number" id="weight" class="input-field" placeholder="e.g. 70" oninput="calculate()" style="flex:1;">
+                  <select id="wunit" class="input-field" style="width:62px;" onchange="calculate()">
+                    <option value="kg">kg</option>
+                    <option value="lb">lb</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label class="input-label">Height</label>
+                <div style="display:flex;gap:6px;">
+                  <input type="number" id="height" class="input-field" placeholder="e.g. 170" oninput="calculate()" style="flex:1;">
+                  <select id="hunit" class="input-field" style="width:62px;" onchange="calculate()">
+                    <option value="cm">cm</option>
+                    <option value="in">in</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CLINICAL STATUS -->
+        <div class="card" style="margin-bottom:14px;">
+          <div class="card-header">
+            <div class="card-icon rose">🏥</div>
+            <div><div class="card-title">Clinical Status</div><div class="card-sub">Diagnosis and dialysis status</div></div>
+          </div>
+          <div class="card-body">
+            <div style="display:grid;gap:12px;">
+              <div>
+                <label class="input-label">CKD Stage <span class="tooltip-icon" onclick="showModal('ckd-info')">?</span></label>
+                <select id="ckd-stage" class="input-field" onchange="calculate()">
+                  <option value="none">No CKD</option>
+                  <option value="1">Stage 1 (eGFR ≥90)</option>
+                  <option value="2">Stage 2 (eGFR 60–89)</option>
+                  <option value="3a">Stage 3a (eGFR 45–59)</option>
+                  <option value="3b">Stage 3b (eGFR 30–44)</option>
+                  <option value="4">Stage 4 (eGFR 15–29)</option>
+                  <option value="5">Stage 5 (eGFR &lt;15, pre-dialysis)</option>
+                </select>
+              </div>
+              <div>
+                <label class="input-label">Dialysis Status</label>
+                <select id="dialysis" class="input-field" onchange="calculate()">
+                  <option value="none">Not on dialysis</option>
+                  <option value="MHD">Maintenance Hemodialysis (MHD)</option>
+                  <option value="PD">Peritoneal Dialysis (PD)</option>
+                </select>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                <div>
+                  <label class="input-label">Diabetes?</label>
+                  <select id="diabetes" class="input-field" onchange="calculate()">
+                    <option value="no">No</option>
+                    <option value="T1">Type 1 DM</option>
+                    <option value="T2">Type 2 DM</option>
+                    <option value="DKD">Diabetic Kidney Disease</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="input-label">Activity Level</label>
+                  <select id="activity" class="input-field" onchange="calculate()">
+                    <option value="1.2">Sedentary (bed/chair)</option>
+                    <option value="1.375">Lightly Active</option>
+                    <option value="1.55" selected>Moderately Active</option>
+                    <option value="1.725">Very Active</option>
+                    <option value="1.9">Extra Active</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label class="input-label">NG/Enteral Feed Mode</label>
+                <select id="ng-mode" class="input-field" onchange="calculate()">
+                  <option value="oral">Oral diet (no NG feed)</option>
+                  <option value="ng-volume">NG Feed – Volume-Based</option>
+                  <option value="ng-energy">NG Feed – Energy-Based</option>
+                  <option value="supplemental">Supplemental NG + Oral</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- OPTIONAL LABS -->
+        <div class="card" style="margin-bottom:14px;">
+          <div class="card-header">
+            <div class="card-icon green">🔬</div>
+            <div><div class="card-title">Lab Values <span class="badge-gray badge" style="font-size:0.65rem;margin-left:4px;">Optional</span></div><div class="card-sub">Influences restriction recommendations</div></div>
+          </div>
+          <div class="card-body">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+              <div>
+                <label class="input-label">eGFR (mL/min/1.73m²)</label>
+                <input type="number" id="egfr" class="input-field" placeholder="e.g. 35" oninput="calculate()">
+              </div>
+              <div>
+                <label class="input-label">Serum K⁺ (mEq/L)</label>
+                <input type="number" id="serum-k" class="input-field" placeholder="3.5–5.0" step="0.1" oninput="calculate()">
+              </div>
+              <div>
+                <label class="input-label">Serum PO₄ (mg/dL)</label>
+                <input type="number" id="serum-po4" class="input-field" placeholder="2.5–4.5" step="0.1" oninput="calculate()">
+              </div>
+              <div>
+                <label class="input-label">Albumin (g/dL)</label>
+                <input type="number" id="albumin" class="input-field" placeholder="3.5–5.0" step="0.1" oninput="calculate()">
+              </div>
+              <div>
+                <label class="input-label">HbA1c (%)</label>
+                <input type="number" id="hba1c" class="input-field" placeholder="e.g. 7.2" step="0.1" oninput="calculate()">
+              </div>
+              <div>
+                <label class="input-label">Insulin-to-Carb Ratio</label>
+                <input type="number" id="icr" class="input-field" placeholder="e.g. 15" oninput="calculate()">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- WEIGHT TYPE SELECTOR -->
+        <div class="card" style="margin-bottom:14px;">
+          <div class="card-body">
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+              <div>
+                <div style="font-weight:600;font-size:0.88rem;">Weight Used for Calculations</div>
+                <div style="font-size:0.75rem;color:var(--text-sec);margin-top:2px;">IBW/AjBW auto-selected based on BMI. Override below.</div>
+              </div>
+              <select id="weight-type" class="input-field" style="width:auto;min-width:185px;" onchange="calculate()">
+                <option value="auto">Auto (recommended)</option>
+                <option value="ABW">Actual Body Weight (ABW)</option>
+                <option value="IBW">Ideal Body Weight (IBW)</option>
+                <option value="AjBW">Adjusted Body Weight (AjBW)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn btn-primary btn-full btn-lg" onclick="calculate()">
+          🧮 Calculate Now
+        </button>
+      </div>
+
+      <!-- RESULTS PANEL -->
+      <div style="grid-column:2;" id="results-panel">
+        <div id="results-placeholder" class="card" style="padding:50px;text-align:center;">
+          <div style="font-size:3.5rem;margin-bottom:14px;opacity:0.3;">🧮</div>
+          <h3 style="color:var(--text-muted);font-weight:500;font-size:1rem;">Enter patient data to see results</h3>
+          <p style="font-size:0.82rem;color:var(--text-muted);margin-top:8px;">Results update automatically as you type</p>
+        </div>
+        <div id="results-content" style="display:none;">
+          <!-- BODY METRICS -->
+          <div class="card" style="margin-bottom:14px;">
+            <div class="card-header">
+              <div class="card-icon blue">📐</div>
+              <div><div class="card-title">Body Metrics</div></div>
+            </div>
+            <div class="card-body">
+              <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
+                <div class="result-box">
+                  <div class="val" id="r-bmi">—</div>
+                  <div class="lbl">BMI</div>
+                </div>
+                <div class="result-box">
+                  <div class="val" id="r-ibw">—</div>
+                  <div class="lbl">IBW (kg)</div>
+                </div>
+                <div class="result-box">
+                  <div class="val" id="r-ajbw">—</div>
+                  <div class="lbl">AjBW (kg)</div>
+                </div>
+              </div>
+              <div style="margin-top:10px;font-size:0.78rem;display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+                <span style="color:var(--text-sec);">Using weight:</span>
+                <span id="r-weight-used" class="badge badge-blue">—</span>
+                <span id="r-bmi-category" class="badge badge-amber" style="margin-left:auto;">—</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- ENERGY -->
+          <div class="card" style="margin-bottom:14px;">
+            <div class="card-header">
+              <div class="card-icon amber">⚡</div>
+              <div><div class="card-title">Energy Requirements</div></div>
+            </div>
+            <div class="card-body">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+                <div class="stat-mini">
+                  <div class="val" id="r-mifflin">—</div>
+                  <div class="lbl">BMR Mifflin (kcal)</div>
+                </div>
+                <div class="stat-mini">
+                  <div class="val" id="r-hb">—</div>
+                  <div class="lbl">BMR Harris-B (kcal)</div>
+                </div>
+              </div>
+              <div class="result-highlight" style="margin-bottom:10px;">
+                <div class="val" id="r-tdee">—</div>
+                <div class="lbl">TDEE (kcal/day)</div>
+              </div>
+              <div style="background:var(--fb-blue-light);border-radius:8px;padding:14px;text-align:center;">
+                <div style="font-size:0.7rem;color:var(--text-sec);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;">Disease-Adjusted Target</div>
+                <div style="font-size:1.6rem;font-weight:700;font-family:'IBM Plex Mono',monospace;color:var(--fb-blue);" id="r-disease-energy">—</div>
+                <div style="font-size:0.73rem;color:var(--text-sec);margin-top:4px;" id="r-disease-energy-note">—</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- PROTEIN -->
+          <div class="card" style="margin-bottom:14px;">
+            <div class="card-header">
+              <div class="card-icon green">🧬</div>
+              <div><div class="card-title">Protein Recommendation</div></div>
+            </div>
+            <div class="card-body">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+                <div class="stat-mini">
+                  <div class="val" id="r-protein-gkg">—</div>
+                  <div class="lbl">g/kg/day</div>
+                </div>
+                <div class="stat-mini">
+                  <div class="val" id="r-protein-g">—</div>
+                  <div class="lbl">Total g/day</div>
+                </div>
+              </div>
+              <div id="r-protein-note" class="alert alert-info" style="font-size:0.79rem;"></div>
+            </div>
+          </div>
+
+          <!-- MACROS & RESTRICTIONS -->
+          <div class="card" style="margin-bottom:14px;">
+            <div class="card-header">
+              <div class="card-icon indigo">🍽️</div>
+              <div><div class="card-title">Macros & Electrolyte Restrictions</div></div>
+            </div>
+            <div class="card-body">
+              <div id="macros-list"></div>
+            </div>
+          </div>
+
+          <!-- ALERTS -->
+          <div id="alerts-section" style="margin-bottom:14px;"></div>
+
+          <!-- NG FEED PLAN -->
+          <div id="ng-feed-section" style="display:none;" class="card" style="margin-bottom:14px;">
+            <div class="card-header">
+              <div class="card-icon blue">🍶</div>
+              <div><div class="card-title">NG Feed Plan</div></div>
+            </div>
+            <div class="card-body">
+              <div id="ng-feed-content"></div>
+            </div>
+          </div>
+
+          <!-- MACRO CHART -->
+          <div class="card" style="margin-bottom:14px;">
+            <div class="card-header">
+              <div class="card-icon indigo">📊</div>
+              <div><div class="card-title">Macronutrient Distribution</div></div>
+            </div>
+            <div class="card-body">
+              <div style="max-width:230px;margin:0 auto;">
+                <canvas id="macro-chart"></canvas>
+              </div>
+              <div id="macro-legend" style="display:flex;justify-content:center;gap:14px;margin-top:12px;flex-wrap:wrap;font-size:0.77rem;"></div>
+            </div>
+          </div>
+
+          <!-- EXPORT BUTTONS -->
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <button class="btn btn-primary" onclick="printSummary()" style="flex:1;padding:10px;font-size:0.85rem;">🖨️ Print Summary</button>
+            <button class="btn btn-outline" onclick="copyToPlanner()" style="flex:1;padding:10px;font-size:0.85rem;">📋 Send to Planner</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== MEAL PLANNER SECTION ===== -->
+<section id="sec-planner" class="section">
+  <div style="max-width:1100px;margin:0 auto;padding:24px 16px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:12px;">
+      <div>
+        <div class="section-title">Meal / NG Feed Planner</div>
+        <div class="section-sub">Distribute daily targets across meals or enteral feeds</div>
+      </div>
+      <div id="planner-targets-summary" class="badge badge-blue" style="font-size:0.78rem;padding:7px 14px;">
+        No targets set — run calculator first
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;" id="planner-grid">
+      <!-- FOOD SEARCH -->
+      <div>
+        <div class="card" style="margin-bottom:14px;">
+          <div class="card-header">
+            <div class="card-icon blue">🔍</div>
+            <div><div class="card-title">Food Search</div><div class="card-sub">Search Sri Lankan & international foods</div></div>
+          </div>
+          <div class="card-body">
+            <input type="text" id="food-search" class="input-field" placeholder="Search foods (e.g. rice, chicken, dhal)..." oninput="searchFoods()" style="margin-bottom:12px;">
+            <div id="food-search-results" style="max-height:240px;overflow-y:auto;"></div>
+            <div style="margin-top:14px;">
+              <div class="input-label" style="margin-bottom:8px;">Quick Add – Common Foods</div>
+              <div style="display:flex;flex-wrap:wrap;gap:6px;" id="quick-foods"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- NG FEED CALCULATOR -->
+        <div class="card" id="ng-calc-card">
+          <div class="card-header">
+            <div class="card-icon blue">🍶</div>
+            <div><div class="card-title">NG Feed Volume Calculator</div></div>
+          </div>
+          <div class="card-body">
+            <div style="display:grid;gap:12px;">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                <div>
+                  <label class="input-label">Target Energy (kcal/day)</label>
+                  <input type="number" id="ng-target-energy" class="input-field" placeholder="e.g. 1800" oninput="calcNGFeed()">
+                </div>
+                <div>
+                  <label class="input-label">Formula Density (kcal/mL)</label>
+                  <select id="ng-density" class="input-field" onchange="calcNGFeed()">
+                    <option value="1.0">1.0 kcal/mL (Standard)</option>
+                    <option value="1.2">1.2 kcal/mL</option>
+                    <option value="1.5" selected>1.5 kcal/mL (Semi-concentrated)</option>
+                    <option value="2.0">2.0 kcal/mL (Concentrated)</option>
+                  </select>
+                </div>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                <div>
+                  <label class="input-label">Feeding Schedule</label>
+                  <select id="ng-schedule" class="input-field" onchange="calcNGFeed()">
+                    <option value="continuous">Continuous (24hr)</option>
+                    <option value="3">3 bolus feeds/day</option>
+                    <option value="4">4 bolus feeds/day</option>
+                    <option value="6">6 bolus feeds/day</option>
+                    <option value="nocturnal">Nocturnal (8hr)</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="input-label">Oral % of Target</label>
+                  <input type="number" id="ng-oral-pct" class="input-field" placeholder="0 = full NG" value="0" min="0" max="100" oninput="calcNGFeed()">
+                </div>
+              </div>
+              <div id="ng-feed-result" style="display:none;" class="ng-formula-card"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MEAL TRACKING -->
+      <div>
+        <div class="card" style="margin-bottom:14px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px 0;">
+            <div class="card-title">Today's Meals</div>
+            <button class="btn btn-danger btn-sm" onclick="clearMeals()">🗑 Clear</button>
+          </div>
+          <div class="card-body">
+            <!-- MEAL TABS -->
+            <div style="display:flex;gap:4px;margin-bottom:14px;background:var(--bg);border-radius:8px;padding:4px;">
+              <button class="tab-btn active" onclick="setMealTab('breakfast',this)">🌅 Breakfast</button>
+              <button class="tab-btn" onclick="setMealTab('lunch',this)">☀️ Lunch</button>
+              <button class="tab-btn" onclick="setMealTab('dinner',this)">🌙 Dinner</button>
+              <button class="tab-btn" onclick="setMealTab('snack',this)">🍎 Snack</button>
+            </div>
+            <div id="current-meal-list" style="min-height:110px;"></div>
+            <div class="divider"></div>
+            <div class="input-label" style="margin-bottom:8px;">Daily Progress vs Targets</div>
+            <div id="meal-progress-bars"></div>
+          </div>
+        </div>
+
+        <!-- PLATE METHOD VISUAL -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon green">🍽️</div>
+            <div><div class="card-title">Diabetes Plate Method</div></div>
+          </div>
+          <div class="card-body">
+            <div style="display:flex;gap:14px;align-items:flex-start;">
+              <svg viewBox="0 0 180 180" style="width:130px;height:130px;flex-shrink:0;filter:drop-shadow(0 2px 8px rgba(0,0,0,0.12));">
+                <circle cx="90" cy="90" r="88" fill="var(--bg)" stroke="var(--border)" stroke-width="1"/>
+                <path d="M90,90 L90,2 A88,88,0,0,1,178,90 L90,90 Z" fill="#86efac"/>
+                <path d="M90,90 L178,90 A88,88,0,0,1,90,178 L90,90 Z" fill="#86efac"/>
+                <path d="M90,90 L90,178 A88,88,0,0,1,2,90 L90,90 Z" fill="#93c5fd"/>
+                <path d="M90,90 L2,90 A88,88,0,0,1,90,2 L90,90 Z" fill="#fde68a"/>
+                <circle cx="90" cy="90" r="26" fill="var(--card)" stroke="var(--border)" stroke-width="1"/>
+                <text x="90" y="87" text-anchor="middle" font-size="7.5" fill="var(--text-muted)" font-family="IBM Plex Sans">Plate</text>
+                <text x="90" y="97" text-anchor="middle" font-size="7.5" fill="var(--text-muted)" font-family="IBM Plex Sans">Method</text>
+              </svg>
+              <div style="font-size:0.8rem;line-height:1.9;">
+                <div style="display:flex;align-items:center;gap:8px;"><span style="width:12px;height:12px;border-radius:3px;background:#86efac;display:inline-block;flex-shrink:0;"></span><strong>½ plate</strong>&nbsp;Non-starchy vegetables</div>
+                <div style="display:flex;align-items:center;gap:8px;"><span style="width:12px;height:12px;border-radius:3px;background:#93c5fd;display:inline-block;flex-shrink:0;"></span><strong>¼ plate</strong>&nbsp;Lean protein</div>
+                <div style="display:flex;align-items:center;gap:8px;"><span style="width:12px;height:12px;border-radius:3px;background:#fde68a;display:inline-block;flex-shrink:0;"></span><strong>¼ plate</strong>&nbsp;Carbohydrates</div>
+                <div style="margin-top:10px;color:var(--text-sec);font-size:0.74rem;line-height:1.6;padding:8px;background:var(--bg);border-radius:6px;">For CKD: Limit high-K⁺/PO₄ foods.<br>For diabetes: Consistent carb amounts each meal.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== TRACKER SECTION ===== -->
+<section id="sec-tracker" class="section">
+  <div style="max-width:1000px;margin:0 auto;padding:24px 16px;">
+    <div class="section-title" style="margin-bottom:4px;">Nutrient Tracker</div>
+    <div class="section-sub" style="margin-bottom:22px;">Track daily intake against personalized targets</div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px;margin-bottom:18px;">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon blue">📊</div>
+          <div><div class="card-title">Today's Summary</div></div>
+        </div>
+        <div class="card-body">
+          <div id="tracker-summary"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon green">🔬</div>
+          <div><div class="card-title">Lab Reference Ranges</div></div>
+        </div>
+        <div class="card-body">
+          <div id="lab-tracker"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:18px;">
+      <div class="card-header">
+        <div class="card-icon amber">⚠️</div>
+        <div><div class="card-title">Electrolyte & Restriction Limits</div></div>
+      </div>
+      <div class="card-body">
+        <div id="restrictions-table"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px 0;">
+        <div class="card-title">💾 Saved Profiles</div>
+        <button class="btn btn-danger btn-sm" onclick="clearProfiles()">🗑 Clear All</button>
+      </div>
+      <div class="card-body">
+        <div id="saved-profiles-list">
+          <p style="color:var(--text-muted);font-size:0.83rem;">No saved profiles yet. Run the calculator and click "Save Profile".</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== RESOURCES SECTION ===== -->
+<section id="sec-resources" class="section">
+  <div style="max-width:1000px;margin:0 auto;padding:24px 16px;">
+    <div class="section-title" style="margin-bottom:4px;">Clinical Resources & Guidelines</div>
+    <div class="section-sub" style="margin-bottom:22px;">Evidence-based sources used in this tool's calculations</div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:16px;margin-bottom:24px;">
+      <div class="card" style="padding:20px;border-top:4px solid var(--fb-blue);">
+        <h3 style="font-size:0.92rem;font-weight:600;margin-bottom:8px;">KDOQI 2020 – Nutrition in CKD</h3>
+        <p style="font-size:0.79rem;color:var(--text-sec);line-height:1.7;margin-bottom:12px;">Comprehensive guidelines for energy (25–35 kcal/kg/day), protein by CKD stage, and electrolyte management. Primary reference for this tool's CKD calculations.</p>
+        <a href="https://www.ajkd.org/article/S0272-6386(20)30726-5/fulltext" target="_blank" class="badge badge-blue" style="text-decoration:none;">→ View Guideline</a>
+      </div>
+      <div class="card" style="padding:20px;border-top:4px solid var(--indigo);">
+        <h3 style="font-size:0.92rem;font-weight:600;margin-bottom:8px;">ADA Standards of Care – 2024</h3>
+        <p style="font-size:0.79rem;color:var(--text-sec);line-height:1.7;margin-bottom:12px;">American Diabetes Association guidelines for nutrition therapy, carbohydrate management, insulin-to-carb ratios, and DKD protein recommendations (0.8 g/kg non-dialysis).</p>
+        <a href="https://diabetesjournals.org/care/issue/47/Supplement_1" target="_blank" class="badge" style="text-decoration:none;background:rgba(88,86,214,0.1);color:var(--indigo);">→ View Guideline</a>
+      </div>
+      <div class="card" style="padding:20px;border-top:4px solid var(--fb-green);">
+        <h3 style="font-size:0.92rem;font-weight:600;margin-bottom:8px;">KDIGO – Diabetes in CKD 2022</h3>
+        <p style="font-size:0.79rem;color:var(--text-sec);line-height:1.7;margin-bottom:12px;">International guidelines on managing DKD: protein targets, glycemic control, cardiovascular risk reduction, and dietary sodium restriction.</p>
+        <a href="https://kdigo.org/guidelines/diabetes-ckd/" target="_blank" class="badge badge-green" style="text-decoration:none;">→ View Guideline</a>
+      </div>
+      <div class="card" style="padding:20px;border-top:4px solid var(--amber);">
+        <h3 style="font-size:0.92rem;font-weight:600;margin-bottom:8px;">Mifflin-St Jeor Equation</h3>
+        <p style="font-size:0.79rem;color:var(--text-sec);line-height:1.7;margin-bottom:12px;">Preferred BMR formula (more accurate than Harris-Benedict in most populations). Men: (10×W)+(6.25×H)−(5×A)+5. Women: −161 instead of +5.</p>
+        <span class="badge badge-amber">Primary BMR Formula Used</span>
+      </div>
+      <div class="card" style="padding:20px;border-top:4px solid var(--rose);">
+        <h3 style="font-size:0.92rem;font-weight:600;margin-bottom:8px;">ESPEN – Enteral Nutrition</h3>
+        <p style="font-size:0.79rem;color:var(--text-sec);line-height:1.7;margin-bottom:12px;">European Society for Clinical Nutrition guidelines for enteral (NG) feeding: formula selection, delivery rates, monitoring parameters for CKD/ICU patients.</p>
+        <a href="https://www.espen.org/guidelines-home" target="_blank" class="badge badge-rose" style="text-decoration:none;">→ View Guideline</a>
+      </div>
+      <div class="card" style="padding:20px;border-top:4px solid var(--text-sec);">
+        <h3 style="font-size:0.92rem;font-weight:600;margin-bottom:8px;">USDA FoodData Central</h3>
+        <p style="font-size:0.79rem;color:var(--text-sec);line-height:1.7;margin-bottom:12px;">Comprehensive food nutrient database. Values for protein, carbohydrate, fat, potassium, phosphorus, sodium used in this tool's food database.</p>
+        <a href="https://fdc.nal.usda.gov/" target="_blank" class="badge badge-gray" style="text-decoration:none;">→ Search Database</a>
+      </div>
+    </div>
+
+    <!-- FORMULA REFERENCE -->
+    <div class="card" style="margin-bottom:18px;">
+      <div class="card-header">
+        <div class="card-icon blue">📐</div>
+        <div><div class="card-title">Key Formulas Used in This Tool</div></div>
+      </div>
+      <div class="card-body">
+        <div style="display:grid;gap:10px;font-size:0.82rem;">
+          <div style="padding:12px;background:var(--bg);border-radius:8px;border-left:3px solid var(--fb-blue);">
+            <strong>Mifflin-St Jeor BMR:</strong><br>
+            Males: BMR = (10 × kg) + (6.25 × cm) – (5 × age) + 5<br>
+            Females: BMR = (10 × kg) + (6.25 × cm) – (5 × age) – 161
+          </div>
+          <div style="padding:12px;background:var(--bg);border-radius:8px;border-left:3px solid var(--indigo);">
+            <strong>Devine IBW Formula:</strong><br>
+            Males: IBW = 50 + 2.3 × (height_in – 60)<br>
+            Females: IBW = 45.5 + 2.3 × (height_in – 60)
+          </div>
+          <div style="padding:12px;background:var(--bg);border-radius:8px;border-left:3px solid var(--amber);">
+            <strong>Adjusted Body Weight (AjBW):</strong><br>
+            AjBW = IBW + 0.4 × (ABW – IBW) [for BMI &gt; 30]
+          </div>
+          <div style="padding:12px;background:var(--bg);border-radius:8px;border-left:3px solid var(--fb-green);">
+            <strong>KDOQI 2020 Protein Recs:</strong><br>
+            CKD 3–5 (non-dialysis): 0.55–0.8 g/kg IBW/day<br>
+            MHD: 1.0–1.2 g/kg/day | PD: 1.0–1.2 g/kg/day<br>
+            DKD non-dialysis: 0.8 g/kg/day
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GLOSSARY -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon indigo">📖</div>
+        <div><div class="card-title">Clinical Glossary</div></div>
+      </div>
+      <div class="card-body">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;font-size:0.81rem;line-height:1.6;">
+          <div style="padding:10px;background:var(--bg);border-radius:7px;"><strong>eGFR</strong> – Estimated Glomerular Filtration Rate. Measure of kidney function. Normal: ≥90 mL/min/1.73m².</div>
+          <div style="padding:10px;background:var(--bg);border-radius:7px;"><strong>CKD</strong> – Chronic Kidney Disease. Staged 1–5 based on eGFR and proteinuria.</div>
+          <div style="padding:10px;background:var(--bg);border-radius:7px;"><strong>MHD</strong> – Maintenance Hemodialysis. Regular dialysis sessions (typically 3×/week).</div>
+          <div style="padding:10px;background:var(--bg);border-radius:7px;"><strong>PD</strong> – Peritoneal Dialysis. Dialysis using the peritoneal membrane.</div>
+          <div style="padding:10px;background:var(--bg);border-radius:7px;"><strong>PEW</strong> – Protein-Energy Wasting. Malnutrition state in CKD/dialysis patients.</div>
+          <div style="padding:10px;background:var(--bg);border-radius:7px;"><strong>DKD</strong> – Diabetic Kidney Disease. CKD caused by diabetes.</div>
+          <div style="padding:10px;background:var(--bg);border-radius:7px;"><strong>HBV Protein</strong> – High Biological Value protein (eggs, meat, fish). Contains all essential amino acids.</div>
+          <div style="padding:10px;background:var(--bg);border-radius:7px;"><strong>TDEE</strong> – Total Daily Energy Expenditure. BMR × activity factor.</div>
+          <div style="padding:10px;background:var(--bg);border-radius:7px;"><strong>IBW</strong> – Ideal Body Weight. Calculated via Devine formula.</div>
+          <div style="padding:10px;background:var(--bg);border-radius:7px;"><strong>HbA1c</strong> – Glycated hemoglobin. 3-month average blood glucose marker.</div>
+          <div style="padding:10px;background:var(--bg);border-radius:7px;"><strong>Hyperkalemia</strong> – High serum K⁺ (&gt;5.0 mEq/L). Restrict dietary potassium.</div>
+          <div style="padding:10px;background:var(--bg);border-radius:7px;"><strong>Hyperphosphatemia</strong> – High serum PO₄ (&gt;4.5 mg/dL). Restrict dietary phosphorus.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MODAL -->
+<div id="modal-overlay" class="modal-overlay" style="display:none;" onclick="closeModal(event)">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <button onclick="closeModal()" style="position:absolute;top:14px;right:16px;background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--text-muted);">✕</button>
+    <div id="modal-content"></div>
+  </div>
+</div>
+
+<!-- ===== JAVASCRIPT ===== -->
+<script>
+// =================== FOOD DATABASE ===================
+const FOODS = [
+  // Sri Lankan / Local Foods
+  {name:'White Rice (cooked)', cat:'Grain', kcal:130, prot:2.7, carb:28.7, fat:0.3, na:1, k:35, po4:43, fiber:0.4, unit:'100g'},
+  {name:'Red Rice (cooked)', cat:'Grain', kcal:111, prot:2.5, carb:23.5, fat:0.9, na:1, k:79, po4:83, fiber:1.8, unit:'100g'},
+  {name:'Dhal (red lentils, cooked)', cat:'Legume', kcal:116, prot:9.0, carb:20.1, fat:0.4, na:2, k:369, po4:180, fiber:7.9, unit:'100g'},
+  {name:'Jackfruit (raw)', cat:'Fruit/Veg', kcal:95, prot:1.7, carb:23.2, fat:0.6, na:2, k:448, po4:21, fiber:1.5, unit:'100g'},
+  {name:'Gotukola (raw)', cat:'Vegetable', kcal:43, prot:3.5, carb:7.6, fat:0.6, na:17, k:391, po4:30, fiber:3.5, unit:'100g'},
+  {name:'Coconut (fresh, grated)', cat:'Fat', kcal:354, prot:3.3, carb:15.2, fat:33.5, na:20, k:356, po4:113, fiber:9.0, unit:'100g'},
+  {name:'Coconut Milk (thin)', cat:'Fat', kcal:97, prot:1.0, carb:2.8, fat:9.5, na:15, k:263, po4:56, fiber:0, unit:'100mL'},
+  {name:'Brinjal/Eggplant (cooked)', cat:'Vegetable', kcal:35, prot:0.8, carb:8.7, fat:0.2, na:1, k:123, po4:15, fiber:2.5, unit:'100g'},
+  {name:'Bitter Gourd (cooked)', cat:'Vegetable', kcal:20, prot:1.0, carb:4.3, fat:0.2, na:5, k:296, po4:31, fiber:2.0, unit:'100g'},
+  {name:'Ash Plantain (cooked)', cat:'Vegetable', kcal:89, prot:1.1, carb:22.8, fat:0.1, na:4, k:358, po4:22, fiber:2.6, unit:'100g'},
+  {name:'Tempe/Tempeh', cat:'Legume', kcal:192, prot:20.3, carb:9.4, fat:10.8, na:9, k:412, po4:266, fiber:0, unit:'100g'},
+  {name:'Chicken (skinless, cooked)', cat:'Protein', kcal:165, prot:31.0, carb:0, fat:3.6, na:74, k:256, po4:220, fiber:0, unit:'100g'},
+  {name:'Fish (Tilapia, cooked)', cat:'Protein', kcal:128, prot:26.2, carb:0, fat:2.7, na:56, k:302, po4:204, fiber:0, unit:'100g'},
+  {name:'Egg (whole, boiled)', cat:'Protein', kcal:155, prot:13.0, carb:1.1, fat:10.6, na:124, k:126, po4:172, fiber:0, unit:'100g'},
+  {name:'Egg White (boiled)', cat:'Protein', kcal:52, prot:10.9, carb:0.7, fat:0.2, na:163, k:163, po4:15, fiber:0, unit:'100g'},
+  {name:'Tuna (canned in water)', cat:'Protein', kcal:116, prot:25.5, carb:0, fat:1.0, na:317, k:241, po4:227, fiber:0, unit:'100g'},
+  {name:'String Hoppers (rice flour)', cat:'Grain', kcal:110, prot:2.0, carb:24.0, fat:0.3, na:5, k:30, po4:40, fiber:0.5, unit:'100g'},
+  {name:'Hoppers (Appa)', cat:'Grain', kcal:148, prot:3.5, carb:28.0, fat:2.5, na:100, k:60, po4:55, fiber:0.4, unit:'100g'},
+  {name:'Bread (white)', cat:'Grain', kcal:265, prot:8.9, carb:49.2, fat:3.2, na:491, k:115, po4:96, fiber:2.7, unit:'100g'},
+  {name:'Oats (cooked)', cat:'Grain', kcal:68, prot:2.4, carb:12.0, fat:1.4, na:49, k:61, po4:77, fiber:1.7, unit:'100g'},
+  // Common foods
+  {name:'Potato (boiled)', cat:'Vegetable', kcal:87, prot:1.9, carb:20.0, fat:0.1, na:6, k:379, po4:44, fiber:1.8, unit:'100g'},
+  {name:'Sweet Potato (boiled)', cat:'Vegetable', kcal:76, prot:1.4, carb:17.7, fat:0.1, na:27, k:230, po4:32, fiber:2.5, unit:'100g'},
+  {name:'Cabbage (cooked)', cat:'Vegetable', kcal:23, prot:1.3, carb:5.1, fat:0.1, na:8, k:170, po4:26, fiber:2.0, unit:'100g'},
+  {name:'Carrot (cooked)', cat:'Vegetable', kcal:35, prot:0.8, carb:8.0, fat:0.2, na:58, k:235, po4:30, fiber:3.0, unit:'100g'},
+  {name:'Apple (raw)', cat:'Fruit', kcal:52, prot:0.3, carb:13.8, fat:0.2, na:1, k:107, po4:11, fiber:2.4, unit:'100g'},
+  {name:'Banana (ripe)', cat:'Fruit', kcal:89, prot:1.1, carb:22.8, fat:0.3, na:1, k:358, po4:22, fiber:2.6, unit:'100g'},
+  {name:'Guava (raw)', cat:'Fruit', kcal:68, prot:2.6, carb:14.3, fat:1.0, na:2, k:417, po4:40, fiber:5.4, unit:'100g'},
+  {name:'Papaya (raw)', cat:'Fruit', kcal:43, prot:0.5, carb:10.8, fat:0.3, na:8, k:182, po4:10, fiber:1.7, unit:'100g'},
+  {name:'Milk (full fat)', cat:'Dairy', kcal:61, prot:3.2, carb:4.8, fat:3.3, na:43, k:132, po4:84, fiber:0, unit:'100mL'},
+  {name:'Yoghurt (plain)', cat:'Dairy', kcal:59, prot:3.5, carb:3.6, fat:3.3, na:46, k:141, po4:94, fiber:0, unit:'100g'},
+  {name:'Cooking Oil (vegetable)', cat:'Fat', kcal:884, prot:0, carb:0, fat:100, na:0, k:0, po4:0, fiber:0, unit:'100mL'},
+  {name:'Margarine (low-Na)', cat:'Fat', kcal:717, prot:0.2, carb:0.6, fat:80.7, na:2, k:26, po4:23, fiber:0, unit:'100g'},
+];
+
+// =================== STATE ===================
+const state = {
+  results: null,
+  meals: { breakfast:[], lunch:[], dinner:[], snack:[] },
+  currentMeal: 'breakfast',
+  targets: null
+};
+
+// =================== DARK MODE ===================
+function toggleDark() {
+  document.body.toggleAttribute('data-dark');
+  document.querySelector('.dark-toggle').textContent = document.body.hasAttribute('data-dark') ? '☀️' : '🌙';
+}
+
+// =================== SECTION NAV ===================
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('sec-' + id).classList.add('active');
+  const idx = ['home','calculator','planner','tracker','resources'].indexOf(id);
+  document.querySelectorAll('.nav-tab')[idx]?.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// =================== CALCULATOR ===================
+function calculate() {
+  const age = parseFloat(document.getElementById('age').value);
+  const gender = document.getElementById('gender').value;
+  const weight = parseFloat(document.getElementById('weight').value);
+  const wunit = document.getElementById('wunit').value;
+  const height = parseFloat(document.getElementById('height').value);
+  const hunit = document.getElementById('hunit').value;
+  const ckdStage = document.getElementById('ckd-stage').value;
+  const dialysis = document.getElementById('dialysis').value;
+  const diabetes = document.getElementById('diabetes').value;
+  const activity = parseFloat(document.getElementById('activity').value);
+  const ngMode = document.getElementById('ng-mode').value;
+  const weightType = document.getElementById('weight-type').value;
+
+  // Optional labs
+  const egfr = parseFloat(document.getElementById('egfr').value) || null;
+  const serumK = parseFloat(document.getElementById('serum-k').value) || null;
+  const serumPO4 = parseFloat(document.getElementById('serum-po4').value) || null;
+  const albumin = parseFloat(document.getElementById('albumin').value) || null;
+  const hba1c = parseFloat(document.getElementById('hba1c').value) || null;
+  const icr = parseFloat(document.getElementById('icr').value) || null;
+
+  if (!age || !gender || !weight || !height) {
+    document.getElementById('results-placeholder').style.display = 'block';
+    document.getElementById('results-content').style.display = 'none';
+    return;
+  }
+
+  // Convert units
+  const wtKg = wunit === 'lb' ? weight * 0.453592 : weight;
+  const htCm = hunit === 'in' ? height * 2.54 : height;
+  const htIn = htCm / 2.54;
+
+  // BMI
+  const bmi = wtKg / Math.pow(htCm / 100, 2);
+
+  // IBW (Devine formula)
+  let ibw;
+  if (gender === 'male') ibw = 50 + 2.3 * (htIn - 60);
+  else ibw = 45.5 + 2.3 * (htIn - 60);
+  ibw = Math.max(ibw, 30);
+
+  // AjBW
+  const ajbw = ibw + 0.4 * (wtKg - ibw);
+
+  // Select calculation weight
+  let calcWt, wtLabel;
+  if (weightType === 'ABW') { calcWt = wtKg; wtLabel = 'ABW'; }
+  else if (weightType === 'IBW') { calcWt = ibw; wtLabel = 'IBW'; }
+  else if (weightType === 'AjBW') { calcWt = ajbw; wtLabel = 'AjBW'; }
+  else {
+    if (bmi >= 30) { calcWt = ajbw; wtLabel = 'AjBW (auto)'; }
+    else if (bmi < 18.5) { calcWt = ibw; wtLabel = 'IBW (auto)'; }
+    else { calcWt = wtKg; wtLabel = 'ABW (auto)'; }
+  }
+
+  // BMR – Mifflin-St Jeor
+  let mifflin;
+  if (gender === 'male') mifflin = 10 * calcWt + 6.25 * htCm - 5 * age + 5;
+  else mifflin = 10 * calcWt + 6.25 * htCm - 5 * age - 161;
+
+  // BMR – Harris-Benedict
+  let hb;
+  if (gender === 'male') hb = 88.362 + 13.397 * calcWt + 4.799 * htCm - 5.677 * age;
+  else hb = 447.593 + 9.247 * calcWt + 3.098 * htCm - 4.330 * age;
+
+  // TDEE
+  const tdee = mifflin * activity;
+
+  // Disease-adjusted energy
+  let targetEnergy = tdee;
+  let energyNote = `${activity}× activity factor applied`;
+  if (dialysis !== 'none') {
+    targetEnergy = 30 * calcWt; // 30-35 kcal/kg for dialysis
+    energyNote = `30 kcal/kg/day (KDOQI 2020 – dialysis)`;
+  } else if (ckdStage !== 'none' && ckdStage !== '1' && ckdStage !== '2') {
+    targetEnergy = 30 * calcWt;
+    energyNote = `30 kcal/kg/day (KDOQI 2020 – CKD 3–5)`;
+  }
+  if (diabetes !== 'no') {
+    targetEnergy = Math.min(targetEnergy, tdee * 0.95);
+    energyNote += ' · Slight deficit for glycemic control';
+  }
+
+  // Protein
+  let protRec = { low: 0.8, high: 0.8, note: '', source: '' };
+  if (dialysis === 'MHD' || dialysis === 'PD') {
+    protRec = { low: 1.0, high: 1.2, note: 'Increased protein for dialysis (KDOQI 2020)', source: 'KDOQI 2020' };
+  } else if (ckdStage === '3a' || ckdStage === '3b' || ckdStage === '4' || ckdStage === '5') {
+    if (diabetes === 'DKD') {
+      protRec = { low: 0.55, high: 0.8, note: 'DKD non-dialysis: 0.55–0.8 g/kg (KDOQI/ADA)', source: 'KDOQI+ADA' };
+    } else {
+      protRec = { low: 0.55, high: 0.8, note: 'CKD 3–5 non-dialysis: 0.55–0.8 g/kg (KDOQI 2020)', source: 'KDOQI 2020' };
+    }
+  } else if (diabetes !== 'no') {
+    protRec = { low: 0.8, high: 0.8, note: 'DM without CKD: 0.8 g/kg (ADA 2024)', source: 'ADA 2024' };
+  } else {
+    protRec = { low: 0.8, high: 1.0, note: 'General population: 0.8–1.0 g/kg', source: 'DRI' };
+  }
+  const protG = ((protRec.low + protRec.high) / 2) * calcWt;
+
+  // Macros
+  const protKcal = protG * 4;
+  let carbPct = 0.50, fatPct = 0.30;
+  if (diabetes !== 'no') { carbPct = 0.40; fatPct = 0.35; }
+  const remKcal = targetEnergy - protKcal;
+  const carbG = (remKcal * carbPct) / 4;
+  const fatG = (remKcal * fatPct) / 9;
+
+  // Restrictions
+  const restrictions = [];
+  // Sodium
+  if (ckdStage !== 'none' || dialysis !== 'none') {
+    restrictions.push({ name: 'Sodium (Na⁺)', limit: '< 2,000 mg/day', note: 'KDOQI/AHA – CKD/dialysis', color: 'amber' });
+  }
+  // Potassium
+  if (dialysis !== 'none' || serumK >= 5.0 || ckdStage === '4' || ckdStage === '5') {
+    let kLimit = '< 2,000 mg/day';
+    if (serumK >= 6.0) kLimit = '< 1,500 mg/day (CRITICAL)';
+    else if (serumK >= 5.5) kLimit = '< 1,800 mg/day (STRICT)';
+    restrictions.push({ name: 'Potassium (K⁺)', limit: kLimit, note: serumK ? `Serum K⁺: ${serumK} mEq/L` : 'Stage 4–5 / dialysis', color: serumK >= 5.5 ? 'rose' : 'amber' });
+  }
+  // Phosphorus
+  if (dialysis !== 'none' || serumPO4 >= 4.5 || ckdStage === '3b' || ckdStage === '4' || ckdStage === '5') {
+    let po4Limit = '< 800 mg/day';
+    if (serumPO4 >= 5.5) po4Limit = '< 600 mg/day (CRITICAL)';
+    restrictions.push({ name: 'Phosphorus (PO₄)', limit: po4Limit, note: serumPO4 ? `Serum PO₄: ${serumPO4} mg/dL` : 'Stage 3b+ / dialysis', color: serumPO4 >= 5.5 ? 'rose' : 'amber' });
+  }
+  // Fluid
+  if (dialysis === 'MHD') {
+    restrictions.push({ name: 'Fluid', limit: '750–1,000 mL/day + urine output', note: 'MHD fluid management', color: 'blue' });
+  } else if (dialysis === 'PD') {
+    restrictions.push({ name: 'Fluid', limit: '1,000–1,500 mL/day', note: 'PD – varies by UF', color: 'blue' });
+  }
+  // Albumin alert
+  const alerts = [];
+  if (albumin !== null && albumin < 3.5) {
+    alerts.push({ type: 'danger', msg: `⚠️ Low albumin (${albumin} g/dL) — risk of Protein-Energy Wasting (PEW). Consider increased protein and dietitian referral.` });
+  }
+  if (hba1c !== null && hba1c > 8.0) {
+    alerts.push({ type: 'warning', msg: `📈 HbA1c ${hba1c}% — Poor glycemic control. Strict carbohydrate management recommended (ADA target < 7%).` });
+  }
+  if (serumK !== null && serumK >= 5.5) {
+    alerts.push({ type: 'danger', msg: `🚨 Hyperkalemia: K⁺ = ${serumK} mEq/L — Strict dietary potassium restriction. Avoid high-K⁺ foods.` });
+  }
+  if (serumPO4 !== null && serumPO4 >= 5.0) {
+    alerts.push({ type: 'danger', msg: `🚨 Hyperphosphatemia: PO₄ = ${serumPO4} mg/dL — Phosphate binders and dietary restriction required.` });
+  }
+  if (dialysis === 'MHD' && icr) {
+    alerts.push({ type: 'info', msg: `💉 ICR 1:${icr}g — Monitor carb intake carefully per meal. Aim for consistent carb distribution.` });
+  }
+
+  // BMI category
+  let bmiCat = '', bmiColor = 'badge-blue';
+  if (bmi < 18.5) { bmiCat = 'Underweight'; bmiColor = 'badge-amber'; }
+  else if (bmi < 25) { bmiCat = 'Normal Weight'; bmiColor = 'badge-green'; }
+  else if (bmi < 30) { bmiCat = 'Overweight'; bmiColor = 'badge-amber'; }
+  else { bmiCat = 'Obese'; bmiColor = 'badge-rose'; }
+
+  // Store
+  state.results = { bmi, ibw, ajbw, calcWt, wtLabel, mifflin, hb, tdee, targetEnergy, energyNote, protRec, protG, carbG, fatG, carbPct, fatPct, restrictions, alerts, bmiCat, bmiColor, ngMode, ckdStage, dialysis };
+  state.targets = { energy: Math.round(targetEnergy), protein: Math.round(protG), carb: Math.round(carbG), fat: Math.round(fatG) };
+
+  renderResults(state.results);
+  renderMealProgress();
+  renderTracker();
+  updatePlannerTargets();
+}
+
+function renderResults(r) {
+  document.getElementById('results-placeholder').style.display = 'none';
+  document.getElementById('results-content').style.display = 'block';
+
+  document.getElementById('r-bmi').textContent = r.bmi.toFixed(1);
+  document.getElementById('r-ibw').textContent = r.ibw.toFixed(1);
+  document.getElementById('r-ajbw').textContent = r.ajbw.toFixed(1);
+  document.getElementById('r-weight-used').textContent = r.wtLabel + ' · ' + r.calcWt.toFixed(1) + ' kg';
+  const bmiEl = document.getElementById('r-bmi-category');
+  bmiEl.textContent = r.bmiCat;
+  bmiEl.className = 'badge ' + r.bmiColor;
+
+  document.getElementById('r-mifflin').textContent = Math.round(r.mifflin);
+  document.getElementById('r-hb').textContent = Math.round(r.hb);
+  document.getElementById('r-tdee').textContent = Math.round(r.tdee);
+  document.getElementById('r-disease-energy').textContent = Math.round(r.targetEnergy) + ' kcal/day';
+  document.getElementById('r-disease-energy-note').textContent = r.energyNote;
+
+  const protMid = ((r.protRec.low + r.protRec.high) / 2);
+  document.getElementById('r-protein-gkg').textContent = r.protRec.low.toFixed(2) + '–' + r.protRec.high.toFixed(2);
+  document.getElementById('r-protein-g').textContent = Math.round(r.protRec.low * r.calcWt) + '–' + Math.round(r.protRec.high * r.calcWt) + ' g';
+  document.getElementById('r-protein-note').innerHTML = '📋 ' + r.protRec.note;
+
+  // Macros
+  const macros = [
+    { name: 'Carbohydrate', g: Math.round(r.carbG), pct: Math.round(r.carbPct * 100), kcal: Math.round(r.carbG * 4), color: '#1877F2' },
+    { name: 'Protein', g: Math.round(r.protG), pct: Math.round(r.protG * 4 / r.targetEnergy * 100), kcal: Math.round(r.protG * 4), color: '#42B72A' },
+    { name: 'Fat', g: Math.round(r.fatG), pct: Math.round(r.fatPct * 100), kcal: Math.round(r.fatG * 9), color: '#F5A623' },
+  ];
+  let macroHtml = macros.map(m => `
+    <div class="nutrient-row">
+      <div style="width:10px;height:10px;border-radius:50%;background:${m.color};flex-shrink:0;"></div>
+      <div style="flex:1;font-size:0.83rem;font-weight:500;">${m.name}</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:0.82rem;font-weight:600;color:var(--fb-blue);">${m.g} g</div>
+      <div style="width:80px;">
+        <div class="progress-wrap"><div class="progress-bar" style="width:${m.pct}%;background:${m.color};"></div></div>
+        <div style="font-size:0.68rem;color:var(--text-muted);margin-top:2px;">${m.pct}%</div>
+      </div>
+      <div style="font-size:0.75rem;color:var(--text-muted);width:60px;text-align:right;">${m.kcal} kcal</div>
+    </div>`).join('');
+
+  if (r.restrictions.length) {
+    macroHtml += '<div class="divider"></div>';
+    macroHtml += '<div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:var(--text-muted);margin-bottom:8px;">Electrolyte Limits</div>';
+    macroHtml += r.restrictions.map(res => `
+      <div class="nutrient-row">
+        <div style="font-size:0.83rem;font-weight:500;flex:1;">${res.name}</div>
+        <span class="badge badge-${res.color}" style="font-size:0.7rem;">${res.limit}</span>
+        <div style="font-size:0.72rem;color:var(--text-muted);flex:1;text-align:right;">${res.note}</div>
+      </div>`).join('');
+  }
+  document.getElementById('macros-list').innerHTML = macroHtml;
+
+  // Alerts
+  let alertsHtml = r.alerts.map(a => `<div class="alert alert-${a.type}" style="margin-bottom:8px;">${a.msg}</div>`).join('');
+  document.getElementById('alerts-section').innerHTML = alertsHtml;
+
+  // NG Feed section
+  if (r.ngMode !== 'oral') {
+    document.getElementById('ng-feed-section').style.display = 'block';
+    document.getElementById('ng-target-energy').value = Math.round(r.targetEnergy);
+    calcNGFeed();
+  } else {
+    document.getElementById('ng-feed-section').style.display = 'none';
+  }
+
+  // Chart
+  renderMacroChart(macros);
+}
+
+function renderMacroChart(macros) {
+  const ctx = document.getElementById('macro-chart').getContext('2d');
+  if (window._macroChart) window._macroChart.destroy();
+  window._macroChart = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: macros.map(m => m.name),
+      datasets: [{ data: macros.map(m => m.kcal), backgroundColor: macros.map(m => m.color), borderWidth: 2, borderColor: 'transparent' }]
+    },
+    options: {
+      cutout: '65%',
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: (c) => ` ${c.label}: ${c.raw} kcal (${Math.round(c.raw / macros.reduce((a,m)=>a+m.kcal,0)*100)}%)`
+          }
+        }
+      }
+    }
+  });
+  document.getElementById('macro-legend').innerHTML = macros.map(m => `
+    <div style="display:flex;align-items:center;gap:5px;">
+      <span style="width:10px;height:10px;border-radius:50%;background:${m.color};display:inline-block;flex-shrink:0;"></span>
+      ${m.name}: <strong>${m.g}g</strong>
+    </div>`).join('');
+}
+
+// =================== NG FEED CALCULATOR ===================
+function calcNGFeed() {
+  const target = parseFloat(document.getElementById('ng-target-energy').value);
+  const density = parseFloat(document.getElementById('ng-density').value);
+  const schedule = document.getElementById('ng-schedule').value;
+  const oralPct = parseFloat(document.getElementById('ng-oral-pct').value) || 0;
+  const resultDiv = document.getElementById('ng-feed-result');
+
+  if (!target || !density) { resultDiv.style.display = 'none'; return; }
+
+  const ngKcal = target * (1 - oralPct / 100);
+  const totalVol = ngKcal / density;
+
+  let scheduleText = '';
+  if (schedule === 'continuous') scheduleText = `Continuous rate: <strong>${Math.round(totalVol / 24)} mL/hr</strong> × 24 hours`;
+  else if (schedule === 'nocturnal') scheduleText = `Nocturnal rate: <strong>${Math.round(totalVol / 8)} mL/hr</strong> × 8 hours`;
+  else scheduleText = `${schedule} bolus feeds/day: <strong>${Math.round(totalVol / parseInt(schedule))} mL/feed</strong>`;
+
+  resultDiv.style.display = 'block';
+  resultDiv.innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px;">
+      <div style="text-align:center;padding:10px;background:white;border-radius:8px;">
+        <div style="font-size:1.3rem;font-weight:700;color:var(--fb-blue);font-family:'IBM Plex Mono',monospace;">${Math.round(ngKcal)}</div>
+        <div style="font-size:0.67rem;color:var(--text-muted);text-transform:uppercase;margin-top:2px;">NG kcal/day</div>
+      </div>
+      <div style="text-align:center;padding:10px;background:white;border-radius:8px;">
+        <div style="font-size:1.3rem;font-weight:700;color:var(--fb-blue);font-family:'IBM Plex Mono',monospace;">${Math.round(totalVol)}</div>
+        <div style="font-size:0.67rem;color:var(--text-muted);text-transform:uppercase;margin-top:2px;">Total mL/day</div>
+      </div>
+      <div style="text-align:center;padding:10px;background:white;border-radius:8px;">
+        <div style="font-size:1.3rem;font-weight:700;color:var(--fb-blue);font-family:'IBM Plex Mono',monospace;">${density}</div>
+        <div style="font-size:0.67rem;color:var(--text-muted);text-transform:uppercase;margin-top:2px;">kcal/mL</div>
+      </div>
+    </div>
+    <div style="font-size:0.82rem;color:var(--fb-blue);font-weight:500;">📊 ${scheduleText}</div>
+    ${oralPct > 0 ? `<div style="font-size:0.78rem;color:var(--text-sec);margin-top:8px;">Oral intake: ${oralPct}% (${Math.round(target * oralPct / 100)} kcal) + NG: ${100 - oralPct}% (${Math.round(ngKcal)} kcal)</div>` : ''}
+    <div style="margin-top:10px;font-size:0.73rem;color:var(--text-muted);">Water flush: Add ~250 mL flushes per schedule. Monitor residuals. Start at 50% rate and advance over 24–48hrs.</div>`;
+
+  // Also update results panel if exists
+  const ngContent = document.getElementById('ng-feed-content');
+  if (ngContent) ngContent.innerHTML = resultDiv.innerHTML;
+}
+
+// =================== FOOD SEARCH ===================
+function searchFoods() {
+  const query = document.getElementById('food-search').value.toLowerCase();
+  const resultsDiv = document.getElementById('food-search-results');
+  if (!query) { resultsDiv.innerHTML = ''; return; }
+
+  const matches = FOODS.filter(f => f.name.toLowerCase().includes(query) || f.cat.toLowerCase().includes(query));
+  if (!matches.length) { resultsDiv.innerHTML = '<p style="font-size:0.8rem;color:var(--text-muted);padding:10px 0;">No foods found. Try different keywords.</p>'; return; }
+
+  resultsDiv.innerHTML = `
+    <div class="food-row food-header" style="margin-bottom:4px;">
+      <div>Food</div><div>kcal</div><div>Prot</div><div>Carb</div><div>K⁺</div><div>PO₄</div><div></div>
+    </div>` + matches.slice(0, 20).map(f => `
+    <div class="food-row">
+      <div style="font-weight:500;font-size:0.8rem;">${f.name}<br><span style="font-size:0.68rem;color:var(--text-muted);">${f.unit}</span></div>
+      <div>${f.kcal}</div><div>${f.prot}g</div><div>${f.carb}g</div>
+      <div style="color:${f.k > 300 ? 'var(--amber)' : 'inherit'}">${f.k}mg</div>
+      <div style="color:${f.po4 > 200 ? 'var(--amber)' : 'inherit'}">${f.po4}mg</div>
+      <button onclick="addFood(${FOODS.indexOf(f)})" class="btn btn-ghost btn-sm" style="padding:4px 8px;font-size:0.72rem;">+ Add</button>
+    </div>`).join('');
+}
+
+function renderQuickFoods() {
+  const quickFoods = ['White Rice (cooked)', 'Dhal (red lentils, cooked)', 'Chicken (skinless, cooked)', 'Egg (whole, boiled)', 'String Hoppers (rice flour)', 'Fish (Tilapia, cooked)', 'Cabbage (cooked)', 'Carrot (cooked)'];
+  document.getElementById('quick-foods').innerHTML = quickFoods.map(name => {
+    const idx = FOODS.findIndex(f => f.name === name);
+    return idx >= 0 ? `<span class="food-tag" onclick="addFood(${idx})">${name.split('(')[0].trim()}</span>` : '';
+  }).join('');
+}
+
+function addFood(idx) {
+  const f = FOODS[idx];
+  const portion = 100;
+  state.meals[state.currentMeal].push({ ...f, portion, id: Date.now() });
+  renderCurrentMeal();
+  renderMealProgress();
+}
+
+function removeFood(meal, id) {
+  state.meals[meal] = state.meals[meal].filter(f => f.id !== id);
+  renderCurrentMeal();
+  renderMealProgress();
+}
+
+function setMealTab(meal, btn) {
+  state.currentMeal = meal;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderCurrentMeal();
+}
+
+function renderCurrentMeal() {
+  const meal = state.meals[state.currentMeal];
+  const div = document.getElementById('current-meal-list');
+  if (!meal.length) {
+    div.innerHTML = '<p style="color:var(--text-muted);font-size:0.8rem;text-align:center;padding:20px 0;">No foods added yet. Search or use quick add.</p>';
+    return;
+  }
+  div.innerHTML = `
+    <div class="food-row food-header">
+      <div>Food</div><div>kcal</div><div>Prot</div><div>K⁺</div><div>PO₄</div><div></div>
+    </div>` + meal.map(f => `
+    <div class="food-row">
+      <div style="font-weight:500;font-size:0.79rem;">${f.name}</div>
+      <div style="font-family:'IBM Plex Mono',monospace;">${f.kcal}</div>
+      <div>${f.prot}g</div>
+      <div style="color:${f.k > 300 ? 'var(--amber)' : 'inherit'}">${f.k}mg</div>
+      <div style="color:${f.po4 > 200 ? 'var(--amber)' : 'inherit'}">${f.po4}mg</div>
+      <button onclick="removeFood('${state.currentMeal}',${f.id})" style="background:none;border:none;color:var(--rose);cursor:pointer;font-size:1rem;">×</button>
+    </div>`).join('');
+}
+
+function clearMeals() {
+  state.meals = { breakfast:[], lunch:[], dinner:[], snack:[] };
+  renderCurrentMeal();
+  renderMealProgress();
+}
+
+function renderMealProgress() {
+  const allFoods = [...state.meals.breakfast, ...state.meals.lunch, ...state.meals.dinner, ...state.meals.snack];
+  const totals = { energy: 0, protein: 0, carb: 0, na: 0, k: 0, po4: 0 };
+  allFoods.forEach(f => {
+    totals.energy += f.kcal;
+    totals.protein += f.prot;
+    totals.carb += f.carb;
+    totals.na += f.na;
+    totals.k += f.k;
+    totals.po4 += f.po4;
+  });
+
+  const targets = state.targets || { energy: 2000, protein: 60, carb: 250 };
+  const bars = [
+    { label: 'Energy', current: Math.round(totals.energy), target: targets.energy, unit: 'kcal', color: '#1877F2' },
+    { label: 'Protein', current: Math.round(totals.protein), target: targets.protein, unit: 'g', color: '#42B72A' },
+    { label: 'Carbs', current: Math.round(totals.carb), target: targets.carb || 250, unit: 'g', color: '#F5A623' },
+    { label: 'Potassium', current: Math.round(totals.k), target: 2000, unit: 'mg', color: '#E41749' },
+    { label: 'Phosphorus', current: Math.round(totals.po4), target: 800, unit: 'mg', color: '#5856D6' },
+  ];
+
+  const div = document.getElementById('meal-progress-bars');
+  if (!div) return;
+  div.innerHTML = bars.map(b => {
+    const pct = Math.min(100, Math.round(b.current / b.target * 100));
+    const over = b.current > b.target;
+    return `
+      <div style="margin-bottom:10px;">
+        <div style="display:flex;justify-content:space-between;font-size:0.75rem;margin-bottom:4px;">
+          <span style="font-weight:600;color:var(--text-sec);">${b.label}</span>
+          <span style="font-family:'IBM Plex Mono',monospace;${over ? 'color:var(--rose);font-weight:700;' : ''}">${b.current}/${b.target} ${b.unit}</span>
+        </div>
+        <div class="progress-wrap"><div class="progress-bar" style="width:${pct}%;background:${over ? 'var(--rose)' : b.color};"></div></div>
+      </div>`;
+  }).join('');
+}
+
+// =================== TRACKER ===================
+function renderTracker() {
+  const r = state.results;
+  const summaryDiv = document.getElementById('tracker-summary');
+  const labDiv = document.getElementById('lab-tracker');
+  const restDiv = document.getElementById('restrictions-table');
+
+  if (!r) {
+    const msg = '<p style="font-size:0.83rem;color:var(--text-muted);">Run the calculator first to see personalized data.</p>';
+    if (summaryDiv) summaryDiv.innerHTML = msg;
+    if (labDiv) labDiv.innerHTML = msg;
+    if (restDiv) restDiv.innerHTML = msg;
+    renderProfilesList();
+    return;
+  }
+
+  if (summaryDiv) {
+    const rows = [
+      { label: 'Target Energy', value: Math.round(r.targetEnergy) + ' kcal/day', color: '#1877F2' },
+      { label: 'Protein', value: Math.round(r.protRec.low * r.calcWt) + '–' + Math.round(r.protRec.high * r.calcWt) + ' g/day', color: '#42B72A' },
+      { label: 'Carbohydrate', value: Math.round(r.carbG) + ' g/day', color: '#F5A623' },
+      { label: 'Fat', value: Math.round(r.fatG) + ' g/day', color: '#5856D6' },
+      { label: 'Calc. Weight', value: r.calcWt.toFixed(1) + ' kg (' + r.wtLabel + ')', color: 'var(--text)' },
+      { label: 'BMI', value: r.bmi.toFixed(1) + ' – ' + r.bmiCat, color: 'var(--text)' },
+    ];
+    summaryDiv.innerHTML = rows.map(row => `
+      <div class="nutrient-row">
+        <div style="width:4px;height:24px;border-radius:2px;background:${row.color};flex-shrink:0;"></div>
+        <div style="flex:1;font-size:0.82rem;color:var(--text-sec);">${row.label}</div>
+        <div style="font-size:0.82rem;font-weight:600;font-family:'IBM Plex Mono',monospace;">${row.value}</div>
+      </div>`).join('');
+  }
+
+  if (labDiv) {
+    const labs = [
+      { name: 'Serum K⁺', range: '3.5–5.0 mEq/L', critical: '>5.5', action: 'Restrict K⁺ foods' },
+      { name: 'Serum PO₄', range: '2.5–4.5 mg/dL', critical: '>5.5', action: 'Restrict PO₄, use binders' },
+      { name: 'Albumin', range: '3.5–5.0 g/dL', critical: '<3.0', action: 'Protein-Energy Wasting risk' },
+      { name: 'HbA1c', range: '<7.0% (ADA target)', critical: '>8.5%', action: 'Strict carb management' },
+      { name: 'eGFR', range: '≥60 (normal)', critical: '<15', action: 'Stage 5 CKD – dialysis prep' },
+      { name: 'Bicarbonate', range: '22–29 mEq/L', critical: '<17', action: 'Metabolic acidosis concern' },
+    ];
+    labDiv.innerHTML = labs.map(l => `
+      <div class="nutrient-row">
+        <div style="flex:1;">
+          <div style="font-size:0.82rem;font-weight:600;">${l.name}</div>
+          <div style="font-size:0.71rem;color:var(--fb-green);">Normal: ${l.range}</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:0.71rem;color:var(--rose);">Critical: ${l.critical}</div>
+          <div style="font-size:0.7rem;color:var(--text-muted);">${l.action}</div>
+        </div>
+      </div>`).join('');
+  }
+
+  if (restDiv) {
+    if (!r.restrictions.length) {
+      restDiv.innerHTML = '<div class="alert alert-success">✅ No specific electrolyte restrictions identified based on entered data.</div>';
+    } else {
+      restDiv.innerHTML = r.restrictions.map(res => `
+        <div class="alert alert-${res.color === 'rose' ? 'danger' : res.color === 'amber' ? 'warning' : 'info'}" style="margin-bottom:8px;">
+          <div>
+            <strong>${res.name}</strong> — ${res.limit}
+            <div style="font-size:0.75rem;margin-top:2px;opacity:0.8;">${res.note}</div>
+          </div>
+        </div>`).join('');
+    }
+  }
+
+  renderProfilesList();
+}
+
+function updatePlannerTargets() {
+  const el = document.getElementById('planner-targets-summary');
+  if (!el || !state.targets) return;
+  el.textContent = `Targets: ${state.targets.energy} kcal · ${state.targets.protein}g protein · ${state.targets.carb}g carbs`;
+  if (state.targets.energy) {
+    document.getElementById('ng-target-energy').value = state.targets.energy;
+    calcNGFeed();
+  }
+}
+
+// =================== PROFILES ===================
+function saveProfile() {
+  if (!state.results) { alert('Please run the calculator first.'); return; }
+  const name = prompt('Enter patient name/ID for this profile:');
+  if (!name) return;
+  const profiles = JSON.parse(localStorage.getItem('rn_profiles') || '[]');
+  profiles.push({
+    name,
+    date: new Date().toLocaleDateString(),
+    inputs: {
+      age: document.getElementById('age').value,
+      gender: document.getElementById('gender').value,
+      weight: document.getElementById('weight').value,
+      wunit: document.getElementById('wunit').value,
+      height: document.getElementById('height').value,
+      hunit: document.getElementById('hunit').value,
+      ckdStage: document.getElementById('ckd-stage').value,
+      dialysis: document.getElementById('dialysis').value,
+      diabetes: document.getElementById('diabetes').value,
+      activity: document.getElementById('activity').value,
+    },
+    results: { bmi: state.results.bmi, targetEnergy: state.results.targetEnergy }
+  });
+  localStorage.setItem('rn_profiles', JSON.stringify(profiles));
+  alert('Profile saved successfully!');
+  renderTracker();
+}
+
+function loadProfile() {
+  const profiles = JSON.parse(localStorage.getItem('rn_profiles') || '[]');
+  if (!profiles.length) { alert('No saved profiles found.'); return; }
+  const list = profiles.map((p, i) => `${i + 1}. ${p.name} (${p.date})`).join('\n');
+  const idx = parseInt(prompt('Select profile number:\n' + list)) - 1;
+  if (isNaN(idx) || !profiles[idx]) return;
+  const p = profiles[idx].inputs;
+  document.getElementById('age').value = p.age;
+  document.getElementById('gender').value = p.gender;
+  document.getElementById('weight').value = p.weight;
+  document.getElementById('wunit').value = p.wunit;
+  document.getElementById('height').value = p.height;
+  document.getElementById('hunit').value = p.hunit;
+  document.getElementById('ckd-stage').value = p.ckdStage;
+  document.getElementById('dialysis').value = p.dialysis;
+  document.getElementById('diabetes').value = p.diabetes;
+  document.getElementById('activity').value = p.activity;
+  calculate();
+}
+
+function renderProfilesList() {
+  const el = document.getElementById('saved-profiles-list');
+  if (!el) return;
+  const profiles = JSON.parse(localStorage.getItem('rn_profiles') || '[]');
+  if (!profiles.length) {
+    el.innerHTML = '<p style="color:var(--text-muted);font-size:0.83rem;">No saved profiles yet. Run the calculator and click "Save Profile".</p>';
+    return;
+  }
+  el.innerHTML = profiles.map((p, i) => `
+    <div class="profile-pill" style="margin-bottom:8px;">
+      <div style="width:34px;height:34px;border-radius:8px;background:var(--fb-blue-light);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;">👤</div>
+      <div style="flex:1;">
+        <div style="font-weight:600;font-size:0.85rem;">${p.name}</div>
+        <div style="font-size:0.71rem;color:var(--text-muted);">${p.date} · BMI: ${p.results.bmi.toFixed(1)} · Energy: ${Math.round(p.results.targetEnergy)} kcal</div>
+      </div>
+      <button onclick="deleteProfile(${i})" style="background:none;border:none;color:var(--rose);cursor:pointer;font-size:1.1rem;" title="Delete">🗑</button>
+    </div>`).join('');
+}
+
+function deleteProfile(idx) {
+  const profiles = JSON.parse(localStorage.getItem('rn_profiles') || '[]');
+  profiles.splice(idx, 1);
+  localStorage.setItem('rn_profiles', JSON.stringify(profiles));
+  renderTracker();
+}
+
+function clearProfiles() {
+  if (confirm('Clear all saved profiles?')) {
+    localStorage.removeItem('rn_profiles');
+    renderTracker();
+  }
+}
+
+// =================== DEMO ===================
+function loadDemo() {
+  document.getElementById('age').value = 58;
+  document.getElementById('gender').value = 'male';
+  document.getElementById('weight').value = 78;
+  document.getElementById('wunit').value = 'kg';
+  document.getElementById('height').value = 168;
+  document.getElementById('hunit').value = 'cm';
+  document.getElementById('ckd-stage').value = '3b';
+  document.getElementById('dialysis').value = 'none';
+  document.getElementById('diabetes').value = 'T2';
+  document.getElementById('activity').value = '1.375';
+  document.getElementById('ng-mode').value = 'oral';
+  document.getElementById('egfr').value = 36;
+  document.getElementById('serum-k').value = 5.2;
+  document.getElementById('serum-po4').value = 4.1;
+  document.getElementById('albumin').value = 3.8;
+  document.getElementById('hba1c').value = 7.8;
+  calculate();
+}
+
+// =================== MODAL ===================
+const MODALS = {
+  'ckd-info': {
+    title: 'Understanding CKD Stages',
+    content: `<div style="font-size:0.84rem;line-height:1.8;color:var(--text-sec);">
+      <p style="margin-bottom:12px;">Chronic Kidney Disease (CKD) is staged based on eGFR (estimated Glomerular Filtration Rate) and urine albumin-to-creatinine ratio (ACR):</p>
+      <table style="width:100%;border-collapse:collapse;font-size:0.8rem;">
+        <thead><tr style="background:var(--fb-blue-light);">
+          <th style="padding:9px;text-align:left;font-weight:600;">Stage</th>
+          <th style="padding:9px;text-align:left;font-weight:600;">eGFR</th>
+          <th style="padding:9px;text-align:left;font-weight:600;">Protein (g/kg/day)</th>
+        </tr></thead>
+        <tbody>
+          <tr><td style="padding:8px;border-bottom:1px solid var(--border);">Stage 1</td><td style="padding:8px;border-bottom:1px solid var(--border);">≥90</td><td style="padding:8px;border-bottom:1px solid var(--border);">≤0.8</td></tr>
+          <tr><td style="padding:8px;border-bottom:1px solid var(--border);">Stage 2</td><td style="padding:8px;border-bottom:1px solid var(--border);">60–89</td><td style="padding:8px;border-bottom:1px solid var(--border);">≤0.8</td></tr>
+          <tr><td style="padding:8px;border-bottom:1px solid var(--border);">Stage 3a/3b</td><td style="padding:8px;border-bottom:1px solid var(--border);">30–59</td><td style="padding:8px;border-bottom:1px solid var(--border);">0.55–0.8</td></tr>
+          <tr><td style="padding:8px;border-bottom:1px solid var(--border);">Stage 4</td><td style="padding:8px;border-bottom:1px solid var(--border);">15–29</td><td style="padding:8px;border-bottom:1px solid var(--border);">0.55–0.8</td></tr>
+          <tr><td style="padding:8px;border-bottom:1px solid var(--border);">Stage 5</td><td style="padding:8px;border-bottom:1px solid var(--border);">&lt;15</td><td style="padding:8px;border-bottom:1px solid var(--border);">0.55–0.8</td></tr>
+          <tr><td style="padding:8px;">MHD/PD</td><td style="padding:8px;">On dialysis</td><td style="padding:8px;">1.0–1.2</td></tr>
+        </tbody>
+      </table>
+      <p style="margin-top:12px;font-size:0.78rem;">Source: KDOQI Clinical Practice Guideline for Nutrition in CKD: 2020 Update.</p>
+    </div>`
+  }
+};
+
+function showModal(key) {
+  const m = MODALS[key];
+  if (!m) return;
+  document.getElementById('modal-content').innerHTML = `<h2 style="font-size:1.05rem;font-weight:700;margin-bottom:16px;">${m.title}</h2>${m.content}`;
+  document.getElementById('modal-overlay').style.display = 'flex';
+}
+function closeModal(event) {
+  if (!event || event.target === document.getElementById('modal-overlay')) {
+    document.getElementById('modal-overlay').style.display = 'none';
+  }
+}
+function copyToPlanner() { showSection('planner'); }
+
+// =================== PRINT ===================
+function printSummary() {
+  if (!state.results) { alert('Please run the calculator first.'); return; }
+  const r = state.results;
+  const w = window.open('', '_blank');
+  w.document.write(`<!DOCTYPE html><html><head><title>Nutrition Summary</title>
+  <style>
+    body{font-family:'IBM Plex Sans',Arial,sans-serif;padding:30px;color:#1C1E21;max-width:800px;margin:0 auto;}
+    h1{color:#1877F2;font-size:1.3rem;border-bottom:3px solid #1877F2;padding-bottom:10px;margin-bottom:20px;}
+    h2{color:#0b5ed7;font-size:0.95rem;margin-top:22px;margin-bottom:8px;border-bottom:1px solid #CED0D4;padding-bottom:5px;}
+    table{width:100%;border-collapse:collapse;margin-top:8px;}
+    td,th{padding:8px 10px;border:1px solid #CED0D4;font-size:0.83rem;}
+    th{background:#E7F3FF;font-weight:600;color:#1877F2;}
+    .disclaimer{background:#FFF3CD;border-left:4px solid #F5A623;padding:12px 16px;font-size:0.78rem;margin-top:22px;border-radius:4px;line-height:1.6;}
+    .header-badge{display:inline-block;background:#E7F3FF;color:#1877F2;padding:4px 10px;border-radius:20px;font-size:0.72rem;font-weight:600;margin-bottom:4px;}
+    .metric{display:inline-block;padding:8px 14px;background:#E7F3FF;border-radius:6px;margin:4px;text-align:center;}
+    .metric .v{font-size:1.2rem;font-weight:700;color:#1877F2;display:block;}
+    .metric .l{font-size:0.68rem;color:#65676B;text-transform:uppercase;}
+  </style></head><body>
+  <h1>🫘 RenalDiabetic NG Feed Planner — Nutrition Summary</h1>
+  <div class="header-badge">Evidence-Based Clinical Estimates · KDOQI 2020 · ADA 2024</div>
+  <p style="font-size:0.78rem;color:#65676B;margin-top:6px;">Generated: ${new Date().toLocaleString()} | This is an educational estimate only.</p>
+  
+  <h2>Body Metrics</h2>
+  <div>
+    <span class="metric"><span class="v">${r.bmi.toFixed(1)}</span><span class="l">BMI</span></span>
+    <span class="metric"><span class="v">${r.ibw.toFixed(1)} kg</span><span class="l">IBW (Devine)</span></span>
+    <span class="metric"><span class="v">${r.ajbw.toFixed(1)} kg</span><span class="l">AjBW</span></span>
+    <span class="metric"><span class="v">${r.calcWt.toFixed(1)} kg</span><span class="l">${r.wtLabel}</span></span>
+  </div>
+
+  <h2>Energy Requirements</h2>
+  <table><tr><th>Formula</th><th>Value</th></tr>
+  <tr><td>BMR (Mifflin-St Jeor)</td><td>${Math.round(r.mifflin)} kcal/day</td></tr>
+  <tr><td>BMR (Harris-Benedict)</td><td>${Math.round(r.hb)} kcal/day</td></tr>
+  <tr><td>TDEE (activity-adjusted)</td><td>${Math.round(r.tdee)} kcal/day</td></tr>
+  <tr><td><strong>Disease-Adjusted Target</strong></td><td><strong>${Math.round(r.targetEnergy)} kcal/day</strong> (${r.energyNote})</td></tr>
+  </table>
+
+  <h2>Macronutrient Targets</h2>
+  <table><tr><th>Nutrient</th><th>g/day</th><th>% Energy</th></tr>
+  <tr><td>Protein</td><td>${Math.round(r.protRec.low * r.calcWt)}–${Math.round(r.protRec.high * r.calcWt)} g</td><td>${Math.round(r.protG * 4 / r.targetEnergy * 100)}%</td></tr>
+  <tr><td>Carbohydrates</td><td>${Math.round(r.carbG)} g</td><td>${Math.round(r.carbPct * 100)}%</td></tr>
+  <tr><td>Fat</td><td>${Math.round(r.fatG)} g</td><td>${Math.round(r.fatPct * 100)}%</td></tr>
+  </table>
+
+  ${r.restrictions.length ? `<h2>Dietary Restrictions</h2>
+  <table><tr><th>Nutrient</th><th>Limit</th><th>Notes</th></tr>
+  ${r.restrictions.map(res => `<tr><td>${res.name}</td><td>${res.limit}</td><td>${res.note}</td></tr>`).join('')}
+  </table>` : ''}
+
+  <div class="disclaimer">⚠️ <strong>Disclaimer:</strong> This summary is for educational purposes only. All values are estimates based on clinical formulas (KDOQI 2020, Mifflin-St Jeor, ADA 2024). Do not use for medical decisions without consultation with a Registered Dietitian (RD) and physician. Calculations may vary ±10–15% from measured values.</div>
+  </body></html>`);
+  w.document.close();
+  w.print();
+}
+
+// =================== RESPONSIVE ===================
+function handleResize() {
+  const grid = document.getElementById('calc-grid');
+  const plannerGrid = document.getElementById('planner-grid');
+  if (window.innerWidth < 768) {
+    if (grid) grid.style.gridTemplateColumns = '1fr';
+    if (plannerGrid) plannerGrid.style.gridTemplateColumns = '1fr';
+  } else {
+    if (grid) grid.style.gridTemplateColumns = '1fr 1fr';
+    if (plannerGrid) plannerGrid.style.gridTemplateColumns = '1fr 1fr';
+  }
+}
+window.addEventListener('resize', handleResize);
+handleResize();
+
+// =================== INIT ===================
+document.addEventListener('DOMContentLoaded', () => {
+  renderQuickFoods();
+  renderCurrentMeal();
+  renderTracker();
+  renderMealProgress();
+});
+</script>
+</body>
+</html>
