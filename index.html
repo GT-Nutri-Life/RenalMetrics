@@ -3,7 +3,191 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RenalDiabetic NG Feed Planner</title>
+
+<!-- ===== PRIMARY SEO META TAGS ===== -->
+<title>RenalMetrics – CKD &amp; Diabetic Nutrition Calculator | NG Feed Planner</title>
+<meta name="description" content="RenalMetrics is a free, evidence-based clinical nutrition tool for Chronic Kidney Disease (CKD) and diabetes. Calculate BMR, TDEE, protein needs, NG feed volumes, and meal plans based on KDOQI 2020, ADA 2024, and KDIGO guidelines.">
+<meta name="keywords" content="CKD nutrition calculator, chronic kidney disease diet, diabetic kidney disease, NG feed planner, renal diet, KDOQI, enteral nutrition, protein requirements CKD, eGFR diet, dialysis nutrition, hemodialysis diet, peritoneal dialysis diet, DKD nutrition, BMR calculator renal, renal meal planner, Sri Lankan renal diet">
+<meta name="author" content="GT-Nutri-Life RenalMetrics">
+<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+<meta name="theme-color" content="#1877F2">
+<link rel="canonical" href="https://gt-nutri-life.github.io/RenalMetrics/">
+
+<!-- ===== OPEN GRAPH (Facebook / LinkedIn) ===== -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://gt-nutri-life.github.io/RenalMetrics/">
+<meta property="og:title" content="RenalMetrics – CKD &amp; Diabetic Nutrition Calculator | NG Feed Planner">
+<meta property="og:description" content="Free evidence-based clinical nutrition calculator for Chronic Kidney Disease and diabetes. Calculate energy needs, protein requirements, electrolyte restrictions, and NG feed volumes using KDOQI 2020 &amp; ADA 2024 guidelines.">
+<meta property="og:image" content="https://gt-nutri-life.github.io/RenalMetrics/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="RenalMetrics – CKD and Diabetic Nutrition Calculator interface showing energy, protein, and macro results">
+<meta property="og:site_name" content="RenalMetrics">
+<meta property="og:locale" content="en_US">
+
+<!-- ===== TWITTER CARD ===== -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="RenalMetrics – CKD &amp; Diabetic Nutrition Calculator">
+<meta name="twitter:description" content="Free evidence-based tool to calculate energy, protein, macros, electrolyte restrictions, and NG feed volumes for CKD and diabetic patients using KDOQI 2020 &amp; ADA 2024.">
+<meta name="twitter:image" content="https://gt-nutri-life.github.io/RenalMetrics/og-image.png">
+<meta name="twitter:image:alt" content="RenalMetrics nutrition calculator interface">
+
+<!-- ===== STRUCTURED DATA (JSON-LD) ===== -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebApplication",
+      "@id": "https://gt-nutri-life.github.io/RenalMetrics/#webapp",
+      "name": "RenalMetrics – CKD & Diabetic Nutrition Calculator",
+      "url": "https://gt-nutri-life.github.io/RenalMetrics/",
+      "description": "Evidence-based clinical nutrition tool for Chronic Kidney Disease (CKD) and diabetes. Calculates BMR, TDEE, protein requirements, macro distributions, electrolyte restrictions, and NG feed volumes based on KDOQI 2020, ADA 2024, and KDIGO guidelines.",
+      "applicationCategory": "HealthApplication",
+      "operatingSystem": "Any",
+      "browserRequirements": "Requires JavaScript",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "featureList": [
+        "BMR calculation (Mifflin-St Jeor & Harris-Benedict)",
+        "TDEE with activity factors",
+        "CKD stage-specific protein recommendations (KDOQI 2020)",
+        "Diabetic kidney disease (DKD) protein targets",
+        "Electrolyte restrictions (potassium, phosphorus, sodium)",
+        "NG/nasogastric feed volume and rate calculator",
+        "Meal planner with Sri Lankan and international food database",
+        "Nutrient progress tracker",
+        "Dark mode support",
+        "Print/export summary"
+      ],
+      "screenshot": "https://gt-nutri-life.github.io/RenalMetrics/og-image.png",
+      "publisher": {
+        "@type": "Organization",
+        "name": "GT-Nutri-Life",
+        "url": "https://gt-nutri-life.github.io/RenalMetrics/"
+      }
+    },
+    {
+      "@type": "MedicalWebPage",
+      "@id": "https://gt-nutri-life.github.io/RenalMetrics/#page",
+      "name": "RenalMetrics – CKD & Diabetic Nutrition Calculator",
+      "url": "https://gt-nutri-life.github.io/RenalMetrics/",
+      "description": "Evidence-based clinical nutrition calculator for patients with Chronic Kidney Disease and/or diabetes, including NG feed planning.",
+      "medicalAudience": {
+        "@type": "MedicalAudience",
+        "audienceType": "Clinician"
+      },
+      "lastReviewed": "2026-04-28",
+      "reviewedBy": {
+        "@type": "Organization",
+        "name": "GT-Nutri-Life"
+      },
+      "about": [
+        {
+          "@type": "MedicalCondition",
+          "name": "Chronic Kidney Disease",
+          "alternateName": "CKD"
+        },
+        {
+          "@type": "MedicalCondition",
+          "name": "Diabetic Kidney Disease",
+          "alternateName": "DKD"
+        },
+        {
+          "@type": "MedicalCondition",
+          "name": "Diabetes Mellitus"
+        }
+      ]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://gt-nutri-life.github.io/RenalMetrics/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Nutrition Calculator",
+          "item": "https://gt-nutri-life.github.io/RenalMetrics/#calculator"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Meal & NG Feed Planner",
+          "item": "https://gt-nutri-life.github.io/RenalMetrics/#planner"
+        },
+        {
+          "@type": "ListItem",
+          "position": 4,
+          "name": "Nutrient Tracker",
+          "item": "https://gt-nutri-life.github.io/RenalMetrics/#tracker"
+        },
+        {
+          "@type": "ListItem",
+          "position": 5,
+          "name": "Clinical Resources",
+          "item": "https://gt-nutri-life.github.io/RenalMetrics/#resources"
+        }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What is RenalMetrics?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "RenalMetrics is a free, evidence-based clinical nutrition calculator for patients with Chronic Kidney Disease (CKD) and/or diabetes. It calculates BMR, TDEE, protein requirements, macro targets, electrolyte restrictions, and NG feed volumes based on KDOQI 2020, ADA 2024, and KDIGO guidelines."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How does RenalMetrics calculate protein requirements for CKD?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "RenalMetrics uses KDOQI 2020 guidelines to calculate stage-specific protein recommendations: CKD stages 3–5 non-dialysis receive 0.55–0.8 g/kg/day, patients on maintenance hemodialysis (MHD) or peritoneal dialysis (PD) receive 1.0–1.2 g/kg/day, and diabetic kidney disease (DKD) non-dialysis patients receive 0.8 g/kg/day."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is an NG feed and how does the NG feed calculator work?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "An NG (nasogastric) feed is enteral nutrition delivered via a tube through the nose into the stomach. RenalMetrics calculates the required feed volume based on target energy needs and formula caloric density (1.0–2.0 kcal/mL), then distributes feeds across the chosen schedule (continuous, bolus, or nocturnal)."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is RenalMetrics a substitute for professional medical advice?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. RenalMetrics is an educational tool providing estimates only. All calculations must be reviewed and applied by a qualified Registered Dietitian (RD), nephrologist, or endocrinologist. Lab values, clinical status, and individual patient factors must guide actual dietary prescriptions."
+          }
+        }
+      ]
+    }
+  ]
+}
+</script>
+
+<!-- ===== PERFORMANCE / PRECONNECT ===== -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="dns-prefetch" href="https://cdn.tailwindcss.com">
+<link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+
+<!-- ===== FAVICON ===== -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🫘</text></svg>">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🫘</text></svg>">
+
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -639,6 +823,28 @@
     transition: background 0.2s;
   }
 
+  /* ============ ACCESSIBILITY ============ */
+  .sr-only {
+    position: absolute; width: 1px; height: 1px;
+    padding: 0; margin: -1px; overflow: hidden;
+    clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+  }
+  .skip-link {
+    position: absolute;
+    top: -40px;
+    left: 6px;
+    background: var(--fb-blue);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 0 0 8px 8px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    z-index: 9999;
+    text-decoration: none;
+    transition: top 0.2s;
+  }
+  .skip-link:focus { top: 0; }
+
   /* ============ SCROLLBAR ============ */
   ::-webkit-scrollbar { width: 6px; height: 6px; }
   ::-webkit-scrollbar-track { background: transparent; }
@@ -648,52 +854,55 @@
 </head>
 <body>
 
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
 <!-- NAVBAR -->
-<nav class="navbar no-print">
+<nav class="navbar no-print" role="navigation" aria-label="Main navigation">
   <div class="navbar-inner">
-    <div class="brand">
-      <div class="brand-icon">🫘</div>
+    <div class="brand" role="banner">
+      <div class="brand-icon" aria-hidden="true">🫘</div>
       <div class="brand-text">
-        <div class="brand-title">RenalDiabetic</div>
-        <div class="brand-sub">NG Feed Planner · v2.0</div>
+        <div class="brand-title">RenalMetrics</div>
+        <div class="brand-sub">CKD &amp; Diabetic Nutrition · v2.0</div>
       </div>
     </div>
 
-    <div class="nav-tabs">
-      <button class="nav-tab active" onclick="showSection('home')">🏠 Home</button>
-      <button class="nav-tab" onclick="showSection('calculator')">🧮 Calculator</button>
-      <button class="nav-tab" onclick="showSection('planner')">🍽️ Meal Planner</button>
-      <button class="nav-tab" onclick="showSection('tracker')">📊 Tracker</button>
-      <button class="nav-tab" onclick="showSection('resources')">📚 Resources</button>
+    <div class="nav-tabs" role="tablist" aria-label="Application sections">
+      <button class="nav-tab active" onclick="showSection('home')" role="tab" aria-selected="true" aria-controls="sec-home" id="tab-home">🏠 Home</button>
+      <button class="nav-tab" onclick="showSection('calculator')" role="tab" aria-selected="false" aria-controls="sec-calculator" id="tab-calculator">🧮 Calculator</button>
+      <button class="nav-tab" onclick="showSection('planner')" role="tab" aria-selected="false" aria-controls="sec-planner" id="tab-planner">🍽️ Meal Planner</button>
+      <button class="nav-tab" onclick="showSection('tracker')" role="tab" aria-selected="false" aria-controls="sec-tracker" id="tab-tracker">📊 Tracker</button>
+      <button class="nav-tab" onclick="showSection('resources')" role="tab" aria-selected="false" aria-controls="sec-resources" id="tab-resources">📚 Resources</button>
     </div>
 
     <div class="nav-actions">
-      <button class="dark-toggle" onclick="toggleDark()" title="Toggle Dark Mode">🌙</button>
+      <button class="dark-toggle" onclick="toggleDark()" title="Toggle Dark Mode" aria-label="Toggle dark mode">🌙</button>
     </div>
   </div>
 </nav>
 
 <!-- DISCLAIMER BAR -->
-<div class="disclaimer-bar no-print">
+<div class="disclaimer-bar no-print" role="alert" aria-live="polite">
   ⚠️ <strong>Educational Tool Only.</strong> All calculations are estimates. Consult a Registered Dietitian (RD) and physician before making any dietary or clinical decisions.
 </div>
 
 <!-- ===== HOME SECTION ===== -->
-<section id="sec-home" class="section active">
+<main id="main-content">
+<section id="sec-home" class="section active" role="tabpanel" aria-labelledby="tab-home">
   <div class="hero-section">
     <div style="max-width:800px;margin:0 auto;text-align:center;position:relative;z-index:1;">
       <div class="hero-pill">Evidence-Based Clinical Nutrition Tool</div>
       <h1 style="font-size:clamp(1.8rem,5vw,2.8rem);font-weight:700;color:white;line-height:1.2;margin-bottom:16px;letter-spacing:-0.03em;">
-        RenalDiabetic NG Feed Planner
+        RenalMetrics – CKD &amp; Diabetic Nutrition Calculator
       </h1>
       <p style="color:rgba(255,255,255,0.85);font-size:1rem;max-width:580px;margin:0 auto 28px;line-height:1.7;">
         A comprehensive nutrition calculator for estimating dietary and enteral (nasogastric/NG feed) needs in patients with Chronic Kidney Disease (CKD) and/or Diabetes/DKD.
       </p>
       <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
-        <button class="btn btn-success btn-lg" onclick="showSection('calculator')">
+        <button class="btn btn-success btn-lg" onclick="showSection('calculator')" aria-label="Open nutrition calculator">
           🧮 Start Calculator
         </button>
-        <button class="btn" onclick="showSection('resources')" style="background:rgba(255,255,255,0.15);color:white;border:1.5px solid rgba(255,255,255,0.3);padding:13px 24px;font-size:1rem;">
+        <button class="btn" onclick="showSection('resources')" style="background:rgba(255,255,255,0.15);color:white;border:1.5px solid rgba(255,255,255,0.3);padding:13px 24px;font-size:1rem;" aria-label="View clinical guidelines and resources">
           📚 View Guidelines
         </button>
       </div>
@@ -703,66 +912,71 @@
   <div style="max-width:1100px;margin:0 auto;padding:36px 16px;">
 
     <!-- FEATURE CARDS -->
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-bottom:36px;">
-      <div class="card feature-card" onclick="showSection('calculator')">
-        <div class="feature-icon">⚡</div>
-        <h3 style="font-size:0.95rem;font-weight:600;margin-bottom:6px;">Energy Calculations</h3>
-        <p style="font-size:0.8rem;color:var(--text-sec);line-height:1.6;">BMR (Mifflin-St Jeor & Harris-Benedict), TDEE, disease-adjusted energy with CKD/DKD/Dialysis logic.</p>
+    <section aria-label="Key features">
+      <h2 class="sr-only">Key Features</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-bottom:36px;">
+        <article class="card feature-card" onclick="showSection('calculator')" role="button" tabindex="0" aria-label="Energy calculations feature – open calculator" onkeydown="if(event.key==='Enter'||event.key===' ')showSection('calculator')">
+          <div class="feature-icon" aria-hidden="true">⚡</div>
+          <h3 style="font-size:0.95rem;font-weight:600;margin-bottom:6px;">Energy Calculations</h3>
+          <p style="font-size:0.8rem;color:var(--text-sec);line-height:1.6;">BMR (Mifflin-St Jeor &amp; Harris-Benedict), TDEE, disease-adjusted energy with CKD/DKD/Dialysis logic.</p>
+        </article>
+        <article class="card feature-card" onclick="showSection('calculator')" role="button" tabindex="0" aria-label="Protein and macros feature – open calculator" onkeydown="if(event.key==='Enter'||event.key===' ')showSection('calculator')">
+          <div class="feature-icon" aria-hidden="true">🧬</div>
+          <h3 style="font-size:0.95rem;font-weight:600;margin-bottom:6px;">Protein &amp; Macros</h3>
+          <p style="font-size:0.8rem;color:var(--text-sec);line-height:1.6;">Stage-specific protein recs (KDOQI 2020): 0.55–1.2 g/kg. Carb, fat, Na, K⁺, PO₄ restrictions.</p>
+        </article>
+        <article class="card feature-card" onclick="showSection('planner')" role="button" tabindex="0" aria-label="NG feed formulas feature – open meal planner" onkeydown="if(event.key==='Enter'||event.key===' ')showSection('planner')">
+          <div class="feature-icon" aria-hidden="true">🍶</div>
+          <h3 style="font-size:0.95rem;font-weight:600;margin-bottom:6px;">NG Feed Formulas</h3>
+          <p style="font-size:0.8rem;color:var(--text-sec);line-height:1.6;">Calculate enteral feed volume, caloric density (1–2 kcal/mL), and distribution across feeding times.</p>
+        </article>
+        <article class="card feature-card" onclick="showSection('planner')" role="button" tabindex="0" aria-label="Sri Lankan foods feature – open meal planner" onkeydown="if(event.key==='Enter'||event.key===' ')showSection('planner')">
+          <div class="feature-icon" aria-hidden="true">🍚</div>
+          <h3 style="font-size:0.95rem;font-weight:600;margin-bottom:6px;">Sri Lankan Foods</h3>
+          <p style="font-size:0.8rem;color:var(--text-sec);line-height:1.6;">Nutrient database includes local foods: rice, dhal, jackfruit, gotukola, tempeh, and more.</p>
+        </article>
       </div>
-      <div class="card feature-card" onclick="showSection('calculator')">
-        <div class="feature-icon">🧬</div>
-        <h3 style="font-size:0.95rem;font-weight:600;margin-bottom:6px;">Protein & Macros</h3>
-        <p style="font-size:0.8rem;color:var(--text-sec);line-height:1.6;">Stage-specific protein recs (KDOQI 2020): 0.55–1.2 g/kg. Carb, fat, Na, K⁺, PO₄ restrictions.</p>
-      </div>
-      <div class="card feature-card" onclick="showSection('planner')">
-        <div class="feature-icon">🍶</div>
-        <h3 style="font-size:0.95rem;font-weight:600;margin-bottom:6px;">NG Feed Formulas</h3>
-        <p style="font-size:0.8rem;color:var(--text-sec);line-height:1.6;">Calculate enteral feed volume, caloric density (1–2 kcal/mL), and distribution across feeding times.</p>
-      </div>
-      <div class="card feature-card" onclick="showSection('planner')">
-        <div class="feature-icon">🍚</div>
-        <h3 style="font-size:0.95rem;font-weight:600;margin-bottom:6px;">Sri Lankan Foods</h3>
-        <p style="font-size:0.8rem;color:var(--text-sec);line-height:1.6;">Nutrient database includes local foods: rice, dhal, jackfruit, gotukola, tempeh, and more.</p>
-      </div>
-    </div>
+    </section>
 
     <!-- DISCLAIMER CARD -->
-    <div style="background:linear-gradient(135deg,#1877F2,#0b5ed7);border-radius:14px;padding:26px;color:white;margin-bottom:32px;">
+    <aside role="note" aria-label="Medical disclaimer" style="background:linear-gradient(135deg,#1877F2,#0b5ed7);border-radius:14px;padding:26px;color:white;margin-bottom:32px;">
       <h2 style="color:white;font-size:1.1rem;font-weight:700;margin-bottom:10px;">⚠️ Important Medical Disclaimer</h2>
       <p style="font-size:0.85rem;line-height:1.8;opacity:0.92;">
         This application provides <strong>educational estimates only</strong>. It is NOT a substitute for professional medical nutrition therapy. Calculations use evidence-based formulas (Mifflin-St Jeor, KDOQI 2020, ADA guidelines) but may vary ±10–15% from indirect calorimetry. Always consult a <strong>Registered Dietitian (RD)</strong> and/or nephrologist/endocrinologist for individualized plans. Lab values (eGFR, serum K⁺, PO₄, HbA1c, albumin) must guide clinical decisions. <strong>Never use this tool for direct medical management without professional oversight.</strong>
       </p>
-    </div>
+    </aside>
 
     <!-- HOW TO USE -->
-    <h2 style="font-size:1.1rem;font-weight:700;margin-bottom:14px;">How to Use This Tool</h2>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;">
-      <div class="card" style="padding:18px;display:flex;gap:14px;align-items:flex-start;">
-        <div class="step-dot active">1</div>
-        <div><strong style="font-size:0.88rem;">Enter Patient Data</strong><p style="font-size:0.78rem;color:var(--text-sec);margin-top:4px;line-height:1.5;">Age, gender, weight, height, CKD stage, diabetes status, activity level.</p></div>
+    <section aria-label="How to use this tool">
+      <h2 style="font-size:1.1rem;font-weight:700;margin-bottom:14px;">How to Use This Tool</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;">
+        <div class="card" style="padding:18px;display:flex;gap:14px;align-items:flex-start;">
+          <div class="step-dot active" aria-hidden="true">1</div>
+          <div><strong style="font-size:0.88rem;">Enter Patient Data</strong><p style="font-size:0.78rem;color:var(--text-sec);margin-top:4px;line-height:1.5;">Age, gender, weight, height, CKD stage, diabetes status, activity level.</p></div>
+        </div>
+        <div class="card" style="padding:18px;display:flex;gap:14px;align-items:flex-start;">
+          <div class="step-dot active" aria-hidden="true">2</div>
+          <div><strong style="font-size:0.88rem;">Review Results</strong><p style="font-size:0.78rem;color:var(--text-sec);margin-top:4px;line-height:1.5;">BMR, TDEE, protein needs, macro splits, restriction limits displayed instantly.</p></div>
+        </div>
+        <div class="card" style="padding:18px;display:flex;gap:14px;align-items:flex-start;">
+          <div class="step-dot active" aria-hidden="true">3</div>
+          <div><strong style="font-size:0.88rem;">Plan Meals or NG Feed</strong><p style="font-size:0.78rem;color:var(--text-sec);margin-top:4px;line-height:1.5;">Distribute targets across meals, add foods, or calculate NG feed volumes.</p></div>
+        </div>
+        <div class="card" style="padding:18px;display:flex;gap:14px;align-items:flex-start;">
+          <div class="step-dot active" aria-hidden="true">4</div>
+          <div><strong style="font-size:0.88rem;">Track &amp; Export</strong><p style="font-size:0.78rem;color:var(--text-sec);margin-top:4px;line-height:1.5;">Monitor nutrient targets, save profiles, and print/export your summary.</p></div>
+        </div>
       </div>
-      <div class="card" style="padding:18px;display:flex;gap:14px;align-items:flex-start;">
-        <div class="step-dot active">2</div>
-        <div><strong style="font-size:0.88rem;">Review Results</strong><p style="font-size:0.78rem;color:var(--text-sec);margin-top:4px;line-height:1.5;">BMR, TDEE, protein needs, macro splits, restriction limits displayed instantly.</p></div>
-      </div>
-      <div class="card" style="padding:18px;display:flex;gap:14px;align-items:flex-start;">
-        <div class="step-dot active">3</div>
-        <div><strong style="font-size:0.88rem;">Plan Meals or NG Feed</strong><p style="font-size:0.78rem;color:var(--text-sec);margin-top:4px;line-height:1.5;">Distribute targets across meals, add foods, or calculate NG feed volumes.</p></div>
-      </div>
-      <div class="card" style="padding:18px;display:flex;gap:14px;align-items:flex-start;">
-        <div class="step-dot active">4</div>
-        <div><strong style="font-size:0.88rem;">Track & Export</strong><p style="font-size:0.78rem;color:var(--text-sec);margin-top:4px;line-height:1.5;">Monitor nutrient targets, save profiles, and print/export your summary.</p></div>
-      </div>
-    </div>
+    </section>
   </div>
 </section>
 
 <!-- ===== CALCULATOR SECTION ===== -->
-<section id="sec-calculator" class="section">
+<section id="sec-calculator" class="section" role="tabpanel" aria-labelledby="tab-calculator">
   <div style="max-width:1200px;margin:0 auto;padding:24px 16px;">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:12px;">
       <div>
-        <div class="section-title">Nutrition Calculator</div>
+        <h2 class="section-title">Nutrition Calculator</h2>
         <div class="section-sub">Enter patient details for personalized estimates</div>
       </div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;">
@@ -1079,11 +1293,11 @@
 </section>
 
 <!-- ===== MEAL PLANNER SECTION ===== -->
-<section id="sec-planner" class="section">
+<section id="sec-planner" class="section" role="tabpanel" aria-labelledby="tab-planner">
   <div style="max-width:1100px;margin:0 auto;padding:24px 16px;">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:12px;">
       <div>
-        <div class="section-title">Meal / NG Feed Planner</div>
+        <h2 class="section-title">Meal / NG Feed Planner</h2>
         <div class="section-sub">Distribute daily targets across meals or enteral feeds</div>
       </div>
       <div id="planner-targets-summary" class="badge badge-blue" style="font-size:0.78rem;padding:7px 14px;">
@@ -1209,9 +1423,9 @@
 </section>
 
 <!-- ===== TRACKER SECTION ===== -->
-<section id="sec-tracker" class="section">
+<section id="sec-tracker" class="section" role="tabpanel" aria-labelledby="tab-tracker">
   <div style="max-width:1000px;margin:0 auto;padding:24px 16px;">
-    <div class="section-title" style="margin-bottom:4px;">Nutrient Tracker</div>
+    <h2 class="section-title" style="margin-bottom:4px;">Nutrient Tracker</h2>
     <div class="section-sub" style="margin-bottom:22px;">Track daily intake against personalized targets</div>
 
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px;margin-bottom:18px;">
@@ -1260,48 +1474,48 @@
 </section>
 
 <!-- ===== RESOURCES SECTION ===== -->
-<section id="sec-resources" class="section">
+<section id="sec-resources" class="section" role="tabpanel" aria-labelledby="tab-resources">
   <div style="max-width:1000px;margin:0 auto;padding:24px 16px;">
-    <div class="section-title" style="margin-bottom:4px;">Clinical Resources & Guidelines</div>
+    <h2 class="section-title" style="margin-bottom:4px;">Clinical Resources &amp; Guidelines</h2>
     <div class="section-sub" style="margin-bottom:22px;">Evidence-based sources used in this tool's calculations</div>
 
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:16px;margin-bottom:24px;">
-      <div class="card" style="padding:20px;border-top:4px solid var(--fb-blue);">
+      <article class="card" style="padding:20px;border-top:4px solid var(--fb-blue);">
         <h3 style="font-size:0.92rem;font-weight:600;margin-bottom:8px;">KDOQI 2020 – Nutrition in CKD</h3>
         <p style="font-size:0.79rem;color:var(--text-sec);line-height:1.7;margin-bottom:12px;">Comprehensive guidelines for energy (25–35 kcal/kg/day), protein by CKD stage, and electrolyte management. Primary reference for this tool's CKD calculations.</p>
-        <a href="https://www.ajkd.org/article/S0272-6386(20)30726-5/fulltext" target="_blank" class="badge badge-blue" style="text-decoration:none;">→ View Guideline</a>
-      </div>
-      <div class="card" style="padding:20px;border-top:4px solid var(--indigo);">
+        <a href="https://www.ajkd.org/article/S0272-6386(20)30726-5/fulltext" target="_blank" rel="noopener noreferrer" class="badge badge-blue" style="text-decoration:none;">→ View Guideline</a>
+      </article>
+      <article class="card" style="padding:20px;border-top:4px solid var(--indigo);">
         <h3 style="font-size:0.92rem;font-weight:600;margin-bottom:8px;">ADA Standards of Care – 2024</h3>
         <p style="font-size:0.79rem;color:var(--text-sec);line-height:1.7;margin-bottom:12px;">American Diabetes Association guidelines for nutrition therapy, carbohydrate management, insulin-to-carb ratios, and DKD protein recommendations (0.8 g/kg non-dialysis).</p>
-        <a href="https://diabetesjournals.org/care/issue/47/Supplement_1" target="_blank" class="badge" style="text-decoration:none;background:rgba(88,86,214,0.1);color:var(--indigo);">→ View Guideline</a>
-      </div>
-      <div class="card" style="padding:20px;border-top:4px solid var(--fb-green);">
+        <a href="https://diabetesjournals.org/care/issue/47/Supplement_1" target="_blank" rel="noopener noreferrer" class="badge" style="text-decoration:none;background:rgba(88,86,214,0.1);color:var(--indigo);">→ View Guideline</a>
+      </article>
+      <article class="card" style="padding:20px;border-top:4px solid var(--fb-green);">
         <h3 style="font-size:0.92rem;font-weight:600;margin-bottom:8px;">KDIGO – Diabetes in CKD 2022</h3>
         <p style="font-size:0.79rem;color:var(--text-sec);line-height:1.7;margin-bottom:12px;">International guidelines on managing DKD: protein targets, glycemic control, cardiovascular risk reduction, and dietary sodium restriction.</p>
-        <a href="https://kdigo.org/guidelines/diabetes-ckd/" target="_blank" class="badge badge-green" style="text-decoration:none;">→ View Guideline</a>
-      </div>
-      <div class="card" style="padding:20px;border-top:4px solid var(--amber);">
+        <a href="https://kdigo.org/guidelines/diabetes-ckd/" target="_blank" rel="noopener noreferrer" class="badge badge-green" style="text-decoration:none;">→ View Guideline</a>
+      </article>
+      <article class="card" style="padding:20px;border-top:4px solid var(--amber);">
         <h3 style="font-size:0.92rem;font-weight:600;margin-bottom:8px;">Mifflin-St Jeor Equation</h3>
         <p style="font-size:0.79rem;color:var(--text-sec);line-height:1.7;margin-bottom:12px;">Preferred BMR formula (more accurate than Harris-Benedict in most populations). Men: (10×W)+(6.25×H)−(5×A)+5. Women: −161 instead of +5.</p>
         <span class="badge badge-amber">Primary BMR Formula Used</span>
-      </div>
-      <div class="card" style="padding:20px;border-top:4px solid var(--rose);">
+      </article>
+      <article class="card" style="padding:20px;border-top:4px solid var(--rose);">
         <h3 style="font-size:0.92rem;font-weight:600;margin-bottom:8px;">ESPEN – Enteral Nutrition</h3>
         <p style="font-size:0.79rem;color:var(--text-sec);line-height:1.7;margin-bottom:12px;">European Society for Clinical Nutrition guidelines for enteral (NG) feeding: formula selection, delivery rates, monitoring parameters for CKD/ICU patients.</p>
-        <a href="https://www.espen.org/guidelines-home" target="_blank" class="badge badge-rose" style="text-decoration:none;">→ View Guideline</a>
-      </div>
-      <div class="card" style="padding:20px;border-top:4px solid var(--text-sec);">
+        <a href="https://www.espen.org/guidelines-home" target="_blank" rel="noopener noreferrer" class="badge badge-rose" style="text-decoration:none;">→ View Guideline</a>
+      </article>
+      <article class="card" style="padding:20px;border-top:4px solid var(--text-sec);">
         <h3 style="font-size:0.92rem;font-weight:600;margin-bottom:8px;">USDA FoodData Central</h3>
         <p style="font-size:0.79rem;color:var(--text-sec);line-height:1.7;margin-bottom:12px;">Comprehensive food nutrient database. Values for protein, carbohydrate, fat, potassium, phosphorus, sodium used in this tool's food database.</p>
-        <a href="https://fdc.nal.usda.gov/" target="_blank" class="badge badge-gray" style="text-decoration:none;">→ Search Database</a>
-      </div>
+        <a href="https://fdc.nal.usda.gov/" target="_blank" rel="noopener noreferrer" class="badge badge-gray" style="text-decoration:none;">→ Search Database</a>
+      </article>
     </div>
 
     <!-- FORMULA REFERENCE -->
-    <div class="card" style="margin-bottom:18px;">
+    <section class="card" style="margin-bottom:18px;" aria-label="Key formulas reference">
       <div class="card-header">
-        <div class="card-icon blue">📐</div>
+        <div class="card-icon blue" aria-hidden="true">📐</div>
         <div><div class="card-title">Key Formulas Used in This Tool</div></div>
       </div>
       <div class="card-body">
@@ -1328,38 +1542,37 @@
           </div>
         </div>
       </div>
-    </div>
+    </section>
 
     <!-- GLOSSARY -->
-    <div class="card">
+    <section class="card" aria-label="Clinical glossary">
       <div class="card-header">
-        <div class="card-icon indigo">📖</div>
+        <div class="card-icon indigo" aria-hidden="true">📖</div>
         <div><div class="card-title">Clinical Glossary</div></div>
       </div>
       <div class="card-body">
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;font-size:0.81rem;line-height:1.6;">
-          <div style="padding:10px;background:var(--bg);border-radius:7px;"><strong>eGFR</strong> – Estimated Glomerular Filtration Rate. Measure of kidney function. Normal: ≥90 mL/min/1.73m².</div>
-          <div style="padding:10px;background:var(--bg);border-radius:7px;"><strong>CKD</strong> – Chronic Kidney Disease. Staged 1–5 based on eGFR and proteinuria.</div>
-          <div style="padding:10px;background:var(--bg);border-radius:7px;"><strong>MHD</strong> – Maintenance Hemodialysis. Regular dialysis sessions (typically 3×/week).</div>
-          <div style="padding:10px;background:var(--bg);border-radius:7px;"><strong>PD</strong> – Peritoneal Dialysis. Dialysis using the peritoneal membrane.</div>
-          <div style="padding:10px;background:var(--bg);border-radius:7px;"><strong>PEW</strong> – Protein-Energy Wasting. Malnutrition state in CKD/dialysis patients.</div>
-          <div style="padding:10px;background:var(--bg);border-radius:7px;"><strong>DKD</strong> – Diabetic Kidney Disease. CKD caused by diabetes.</div>
-          <div style="padding:10px;background:var(--bg);border-radius:7px;"><strong>HBV Protein</strong> – High Biological Value protein (eggs, meat, fish). Contains all essential amino acids.</div>
-          <div style="padding:10px;background:var(--bg);border-radius:7px;"><strong>TDEE</strong> – Total Daily Energy Expenditure. BMR × activity factor.</div>
-          <div style="padding:10px;background:var(--bg);border-radius:7px;"><strong>IBW</strong> – Ideal Body Weight. Calculated via Devine formula.</div>
-          <div style="padding:10px;background:var(--bg);border-radius:7px;"><strong>HbA1c</strong> – Glycated hemoglobin. 3-month average blood glucose marker.</div>
-          <div style="padding:10px;background:var(--bg);border-radius:7px;"><strong>Hyperkalemia</strong> – High serum K⁺ (&gt;5.0 mEq/L). Restrict dietary potassium.</div>
-          <div style="padding:10px;background:var(--bg);border-radius:7px;"><strong>Hyperphosphatemia</strong> – High serum PO₄ (&gt;4.5 mg/dL). Restrict dietary phosphorus.</div>
-        </div>
+        <dl style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;font-size:0.81rem;line-height:1.6;">
+          <div style="padding:10px;background:var(--bg);border-radius:7px;"><dt style="display:inline;font-weight:700;">eGFR</dt><dd style="display:inline;"> – Estimated Glomerular Filtration Rate. Measure of kidney function. Normal: ≥90 mL/min/1.73m².</dd></div>
+          <div style="padding:10px;background:var(--bg);border-radius:7px;"><dt style="display:inline;font-weight:700;">CKD</dt><dd style="display:inline;"> – Chronic Kidney Disease. Staged 1–5 based on eGFR and proteinuria.</dd></div>
+          <div style="padding:10px;background:var(--bg);border-radius:7px;"><dt style="display:inline;font-weight:700;">MHD</dt><dd style="display:inline;"> – Maintenance Hemodialysis. Regular dialysis sessions (typically 3×/week).</dd></div>
+          <div style="padding:10px;background:var(--bg);border-radius:7px;"><dt style="display:inline;font-weight:700;">PD</dt><dd style="display:inline;"> – Peritoneal Dialysis. Dialysis using the peritoneal membrane.</dd></div>
+          <div style="padding:10px;background:var(--bg);border-radius:7px;"><dt style="display:inline;font-weight:700;">PEW</dt><dd style="display:inline;"> – Protein-Energy Wasting. Malnutrition state in CKD/dialysis patients.</dd></div>
+          <div style="padding:10px;background:var(--bg);border-radius:7px;"><dt style="display:inline;font-weight:700;">DKD</dt><dd style="display:inline;"> – Diabetic Kidney Disease. CKD caused by diabetes.</dd></div>
+          <div style="padding:10px;background:var(--bg);border-radius:7px;"><dt style="display:inline;font-weight:700;">HBV Protein</dt><dd style="display:inline;"> – High Biological Value protein (eggs, meat, fish). Contains all essential amino acids.</dd></div>
+          <div style="padding:10px;background:var(--bg);border-radius:7px;"><dt style="display:inline;font-weight:700;">TDEE</dt><dd style="display:inline;"> – Total Daily Energy Expenditure. BMR × activity factor.</dd></div>
+          <div style="padding:10px;background:var(--bg);border-radius:7px;"><dt style="display:inline;font-weight:700;">IBW</dt><dd style="display:inline;"> – Ideal Body Weight. Calculated via Devine formula.</dd></div>
+          <div style="padding:10px;background:var(--bg);border-radius:7px;"><dt style="display:inline;font-weight:700;">HbA1c</dt><dd style="display:inline;"> – Glycated hemoglobin. 3-month average blood glucose marker.</dd></div>
+          <div style="padding:10px;background:var(--bg);border-radius:7px;"><dt style="display:inline;font-weight:700;">Hyperkalemia</dt><dd style="display:inline;"> – High serum K⁺ (&gt;5.0 mEq/L). Restrict dietary potassium.</dd></div>
+          <div style="padding:10px;background:var(--bg);border-radius:7px;"><dt style="display:inline;font-weight:700;">Hyperphosphatemia</dt><dd style="display:inline;"> – High serum PO₄ (&gt;4.5 mg/dL). Restrict dietary phosphorus.</dd></div>
+        </dl>
       </div>
-    </div>
+    </section>
   </div>
 </section>
-
-<!-- MODAL -->
-<div id="modal-overlay" class="modal-overlay" style="display:none;" onclick="closeModal(event)">
+</main>
+<div id="modal-overlay" class="modal-overlay" style="display:none;" onclick="closeModal(event)" role="dialog" aria-modal="true" aria-labelledby="modal-content">
   <div class="modal-box" onclick="event.stopPropagation()">
-    <button onclick="closeModal()" style="position:absolute;top:14px;right:16px;background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--text-muted);">✕</button>
+    <button onclick="closeModal()" style="position:absolute;top:14px;right:16px;background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--text-muted);" aria-label="Close dialog">✕</button>
     <div id="modal-content"></div>
   </div>
 </div>
@@ -1420,11 +1633,28 @@ function toggleDark() {
 
 // =================== SECTION NAV ===================
 function showSection(id) {
+  const sections = ['home','calculator','planner','tracker','resources'];
+  const titles = {
+    home: 'RenalMetrics – CKD & Diabetic Nutrition Calculator | NG Feed Planner',
+    calculator: 'Nutrition Calculator – RenalMetrics',
+    planner: 'Meal & NG Feed Planner – RenalMetrics',
+    tracker: 'Nutrient Tracker – RenalMetrics',
+    resources: 'Clinical Resources & Guidelines – RenalMetrics'
+  };
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => {
+    t.classList.remove('active');
+    t.setAttribute('aria-selected', 'false');
+  });
   document.getElementById('sec-' + id).classList.add('active');
-  const idx = ['home','calculator','planner','tracker','resources'].indexOf(id);
-  document.querySelectorAll('.nav-tab')[idx]?.classList.add('active');
+  const idx = sections.indexOf(id);
+  const activeTab = document.querySelectorAll('.nav-tab')[idx];
+  if (activeTab) {
+    activeTab.classList.add('active');
+    activeTab.setAttribute('aria-selected', 'true');
+  }
+  document.title = titles[id] || titles.home;
+  history.replaceState(null, '', '#' + id);
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -2155,7 +2385,24 @@ document.addEventListener('DOMContentLoaded', () => {
   renderCurrentMeal();
   renderTracker();
   renderMealProgress();
+  // Restore section from URL hash for deep-linking
+  const validSections = ['home','calculator','planner','tracker','resources'];
+  const hash = window.location.hash.replace('#','');
+  if (hash && validSections.includes(hash)) {
+    showSection(hash);
+  }
 });
 </script>
+
+<!-- FOOTER -->
+<footer style="background:var(--card);border-top:1px solid var(--border);padding:20px;text-align:center;font-size:0.78rem;color:var(--text-sec);" role="contentinfo">
+  <p>
+    <strong>RenalMetrics</strong> – Free CKD &amp; Diabetic Nutrition Calculator &amp; NG Feed Planner.
+    Built on evidence: <a href="https://www.ajkd.org/article/S0272-6386(20)30726-5/fulltext" target="_blank" rel="noopener noreferrer" style="color:var(--fb-blue);text-decoration:none;">KDOQI 2020</a>,
+    <a href="https://diabetesjournals.org/care/issue/47/Supplement_1" target="_blank" rel="noopener noreferrer" style="color:var(--fb-blue);text-decoration:none;">ADA 2024</a>,
+    <a href="https://kdigo.org/guidelines/diabetes-ckd/" target="_blank" rel="noopener noreferrer" style="color:var(--fb-blue);text-decoration:none;">KDIGO 2022</a>.
+  </p>
+  <p style="margin-top:6px;">⚠️ For educational use only. Not a substitute for professional medical advice. Always consult a Registered Dietitian (RD) and physician.</p>
+</footer>
 </body>
 </html>
